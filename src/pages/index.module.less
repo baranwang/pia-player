@@ -1,0 +1,30 @@
+@import "../vars.less";
+
+.main {
+  padding: 24px;
+  overflow-y: auto;
+}
+
+.search {
+  &-type {
+    width: 96px;
+  }
+  .main &-filter {
+    margin-bottom: 24px;
+    :global(.ant-form-item-control) {
+      width: 240px;
+    }
+  }
+  &-reslut {
+    em {
+      font-style: normal;
+      background-color: #d0bcff;
+    }
+    :global(.ant-btn) {
+      padding: 0;
+      + :global(.ant-btn) {
+        margin-left: 8px;
+      }
+    }
+  }
+}

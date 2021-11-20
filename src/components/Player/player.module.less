@@ -1,0 +1,75 @@
+@import "../../vars.less";
+
+.player {
+  display: flex;
+  flex: 0 0 $height;
+  flex-direction: column;
+  justify-content: center;
+  height: 88px;
+  background-color: @white;
+  box-shadow: @shadow-1-up;
+
+  &-progress {
+    display: flex;
+    align-items: center;
+    time {
+      flex: 0 0 6em;
+      text-align: center;
+    }
+    :global(.ant-slider) {
+      flex: auto;
+    }
+  }
+
+  &-actions {
+    display: flex;
+    align-items: center;
+    padding: 0 16px;
+    &-playbackrate {
+      &-slider {
+        width: 280px;
+        padding: 0 16px;
+      }
+    }
+    &-volume {
+      &-slider {
+        padding: 0 8px;
+      }
+    }
+    &-right {
+      flex: 1;
+      justify-content: end;
+    }
+  }
+
+  &-meta {
+    flex: 1;
+    &-cover {
+      width: 32px;
+      height: 32px;
+      border-radius: 4px;
+    }
+    &-title {
+      width: 160px;
+    }
+  }
+
+  &-queue {
+    max-height: calc(100vh - 120px);
+    overflow-y: auto;
+    &-item {
+      display: flex;
+      min-width: 240px;
+      &-text {
+        flex: auto;
+      }
+      &-progress {
+        flex: 0 0 16px;
+      }
+    }
+  }
+}
+
+:export {
+  white: %("%a,%a,%a", red(@white), green(@white), blue(@white));
+}

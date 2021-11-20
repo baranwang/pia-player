@@ -1,0 +1,81 @@
+{
+  "name": "pia-player",
+  "productName": "Pia Player",
+  "version": "0.0.0",
+  "description": "Pia戏播放器",
+  "main": ".webpack/main",
+  "scripts": {
+    "start": "electron-forge start",
+    "package": "electron-forge package",
+    "make": "electron-forge make",
+    "publish": "electron-forge publish",
+    "lint": "eslint --ext .ts,.tsx .",
+    "lint:style": "stylelint --fix ./src/*.less"
+  },
+  "author": {
+    "name": "baranwang",
+    "email": "me@baran.wang"
+  },
+  "license": "MIT",
+  "config": {
+    "forge": "./forge.config.js"
+  },
+  "build": {
+    "nsis": {
+      "oneClick": false,
+      "perMachine": true,
+      "allowToChangeInstallationDirectory": true,
+      "uninstallDisplayName": "Pia Player",
+      "license": "./LICENSE"
+    }
+  },
+  "devDependencies": {
+    "@electron-forge/cli": "^6.0.0-beta.61",
+    "@electron-forge/maker-dmg": "^6.0.0-beta.61",
+    "@electron-forge/plugin-webpack": "6.0.0-beta.61",
+    "@electron-forge/publisher-github": "^6.0.0-beta.61",
+    "@imxeno/electron-forge-maker-nsis": "^6.0.1",
+    "@types/react": "^17.0.34",
+    "@types/react-dom": "^17.0.11",
+    "@typescript-eslint/eslint-plugin": "^5.4.0",
+    "@typescript-eslint/parser": "^5.4.0",
+    "@vercel/webpack-asset-relocator-loader": "1.7.0",
+    "copy-webpack-plugin": "^10.0.0",
+    "css-loader": "^6.5.1",
+    "dts-css-modules-loader": "^1.2.4",
+    "electron": "16.0.1",
+    "electron-devtools-installer": "^3.2.0",
+    "eslint": "^8.2.0",
+    "eslint-plugin-import": "^2.25.3",
+    "fork-ts-checker-webpack-plugin": "^6.4.0",
+    "less": "^4.1.2",
+    "less-loader": "^10.2.0",
+    "node-loader": "^2.0.0",
+    "style-loader": "^3.3.1",
+    "stylelint": "^14.1.0",
+    "stylelint-config-standard": "^24.0.0",
+    "stylelint-order": "^5.0.0",
+    "ts-loader": "^9.2.6",
+    "typescript": "^4.5.2"
+  },
+  "dependencies": {
+    "@ffmpeg/core": "^0.10.0",
+    "@ffmpeg/ffmpeg": "^0.10.1",
+    "ahooks": "^2.10.12",
+    "antd": "^4.16.13",
+    "axios": "^0.24.0",
+    "classnames": "^2.3.1",
+    "dexie": "^3.2.0",
+    "electron-log": "^4.4.1",
+    "electron-updater": "^4.6.1",
+    "fs": "^0.0.1-security",
+    "mobx": "^6.3.7",
+    "mobx-react": "^7.2.1",
+    "p-queue": "^7.1.0",
+    "path": "^0.12.7",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "react-fast-marquee": "^1.2.1",
+    "url": "^0.11.0"
+  }
+}

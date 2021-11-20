@@ -1,0 +1,11 @@
+@import "../../vars.less";
+
+.header {
+  display: flex;
+  align-items: center;
+  &-title-bar {
+    height: env(titlebar-area-height, 32px);
+    background-color: @primary-color;
+    -webkit-app-region: drag;
+  }
+}
