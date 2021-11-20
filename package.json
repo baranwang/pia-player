@@ -1,7 +1,7 @@
 {
   "name": "pia-player",
   "productName": "Pia Player",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Pia戏播放器",
   "main": ".webpack/main",
   "scripts": {
