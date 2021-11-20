@@ -100,7 +100,6 @@ export const hooks = (mainWindow: Electron.BrowserWindow) => {
         args.filename
       );
       try {
-        
         fs.writeFileSync(filepath, Buffer.from(args.arrayBuffer));
         return filepath;
       } catch (error) {
@@ -169,7 +168,10 @@ export const hooks = (mainWindow: Electron.BrowserWindow) => {
         }    
         .author-name {
           pointer-events: none;
-        }      
+        }
+        #content {
+          user-select: text;
+        }
         `
       );
       dramaWindow.webContents.session.webRequest.onBeforeRequest(

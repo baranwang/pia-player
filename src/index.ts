@@ -22,6 +22,7 @@ const createWindow = (): void => {
   mainWindow = new BrowserWindow({
     height: 720,
     width: 960,
+    backgroundColor: '#6750a4',
     titleBarStyle: 'hidden',
     titleBarOverlay: {
       color: '#6750a4',
