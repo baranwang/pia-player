@@ -119,25 +119,29 @@ export const Player: React.FC<React.HTMLAttributes<HTMLElement>> = observer(
       }
     }, [playlist, playIndex]);
 
-    React.useEffect(() => {
-      const handlePlaying = () => {
-        if (!playStatus) {
-          setPlayStatus(true);
-        }
-      };
-      const handlePause = () => {
-        setPlayStatus(false);
-      };
-      const handleDurationChange = () => {
-        setDuration(audio.duration);
-      };
-      const handleCurrentTimeChange = () => {
-        setCurrentTime(audio.currentTime);
-      };
-      const handleVolumeChange = () => {
-        setVolume(audio.volume);
-      };
+    const handlePlaying = React.useCallback(() => {
+      if (!playStatus) {
+        setPlayStatus(true);
+      }
+    }, [playStatus]);
 
+    const handlePause = React.useCallback(() => {
+      setPlayStatus(false);
+    }, [playStatus]);
+
+    const handleDurationChange = React.useCallback(() => {
+      setDuration(audio.duration);
+    }, [audio]);
+
+    const handleCurrentTimeChange = React.useCallback(() => {
+      setCurrentTime(audio.currentTime);
+    }, [audio]);
+
+    const handleVolumeChange = React.useCallback(() => {
+      setVolume(audio.volume);
+    }, [audio]);
+
+    React.useEffect(() => {
       audio.addEventListener('playing', handlePlaying);
       audio.addEventListener('pause', handlePause);
       audio.addEventListener('durationchange', handleDurationChange);
@@ -217,7 +221,7 @@ export const Player: React.FC<React.HTMLAttributes<HTMLElement>> = observer(
           <Space className={styles['player-meta']}>
             <img
               className={styles['player-meta-cover']}
-              src={activeDrama?.photo || activeDrama?.avatar}
+              src={activeDrama?.photo || require('./default-cover.png')}
             />
             <Marquee
               className={styles['player-meta-title']}

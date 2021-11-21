@@ -74,4 +74,8 @@ module.exports = [
     test: /\.ttf$/,
     type: 'asset/resource',
   },
+  {
+    test: /\.png$/,
+    type: 'asset/resource',
+  },
 ];
