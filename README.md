@@ -1,4 +1,4 @@
-![Pia Player](https://github.com/baranwang/pia-player/blob/main/build/icon.ico)
+![Pia Player](https://pia-player.vercel.app/_next/image?url=https%3A%2F%2Fraw.githubusercontent.com%2Fbaranwang%2Fpia-player%2Fmain%2Fbuild%2Ficon.ico&w=128&q=75)
 
 # Pia Player
 
