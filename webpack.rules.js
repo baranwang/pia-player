@@ -28,12 +28,12 @@ module.exports = [
   },
   {
     test: /\.css$/,
-    use: [{ loader: 'style-loader' }, { loader: 'css-loader' }],
+    use: ['style-loader', 'css-loader'],
   },
   {
     test: /\.less$/,
     use: [
-      { loader: 'style-loader' },
+      'style-loader',
       {
         loader: 'dts-css-modules-loader',
         options: {
@@ -53,6 +53,18 @@ module.exports = [
         options: {
           lessOptions: {
             javascriptEnabled: true,
+          },
+        },
+      },
+      {
+        loader: 'postcss-loader',
+        options: {
+          postcssOptions: {
+            plugins: [
+              require('autoprefixer')({
+                overrideBrowserslist: ['chrome 96'],
+              }),
+            ],
           },
         },
       },

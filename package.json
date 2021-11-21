@@ -13,7 +13,7 @@
     "lint:style": "stylelint --fix ./src/*.less"
   },
   "author": {
-    "name": "baranwang",
+    "name": "Baran",
     "email": "me@baran.wang"
   },
   "license": "MIT",
@@ -40,6 +40,7 @@
     "@typescript-eslint/eslint-plugin": "^5.4.0",
     "@typescript-eslint/parser": "^5.4.0",
     "@vercel/webpack-asset-relocator-loader": "1.7.0",
+    "autoprefixer": "^10.4.0",
     "copy-webpack-plugin": "^10.0.0",
     "css-loader": "^6.5.1",
     "dts-css-modules-loader": "^1.2.4",
@@ -51,6 +52,8 @@
     "less": "^4.1.2",
     "less-loader": "^10.2.0",
     "node-loader": "^2.0.0",
+    "postcss": "^8.3.11",
+    "postcss-loader": "^6.2.0",
     "style-loader": "^3.3.1",
     "stylelint": "^14.1.0",
     "stylelint-config-standard": "^24.0.0",

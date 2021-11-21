@@ -7,9 +7,8 @@ import styles from './header.module.less';
 export const Header: React.FC = observer(({ children }) => {
   return (
     <>
-      <div className={styles['header-title-bar']} onClick={()=>{
-        console.log('click')
-      }}>
+      <div className={styles['header-title-bar']}>
+        <div className={styles['header-title-bar-logo']}>Pia Player</div>
       </div>
       <Layout.Header className={styles.header}>{children}</Layout.Header>
     </>

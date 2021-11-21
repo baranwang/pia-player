@@ -1,10 +1,14 @@
 const path = require('path');
 const fs = require('fs');
+const packageJson = require('./package.json');
 
 module.exports = {
   packagerConfig: {
-    icon: path.resolve('build', 'icon.ico'),
+    icon: path.resolve('build', 'icon'),
     // asar: true,
+    appCopyright: `Copyright © ${new Date().getFullYear()} ${
+      packageJson.author.name
+    }`,
   },
   makers: [
     {
@@ -47,5 +51,20 @@ module.exports = {
       },
     },
   ],
-  hooks: {},
+  hooks: {
+    postMake(forgeConfig, options) {
+      options.forEach((item) => {
+        item.artifacts.forEach((artifact) => {
+          const extname = path.extname(artifact);
+          const {
+            packageJSON: { productName, version },
+            platform,
+            arch,
+          } = item;
+          const fileName = `${productName}-${version}-${platform}-${arch}${extname}`;
+          fs.renameSync(artifact, path.join(path.dirname(artifact), fileName));
+        });
+      });
+    },
+  },
 };

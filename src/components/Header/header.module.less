@@ -4,8 +4,29 @@
   display: flex;
   align-items: center;
   &-title-bar {
+    display: flex;
+    align-items: center;
     height: env(titlebar-area-height, 32px);
+    min-height: 32px;
+    padding: 0 16px;
     background-color: @primary-color;
     -webkit-app-region: drag;
+    &-logo{
+      display: inline-flex;
+      align-items: center;
+      color: @white;
+      &::before {
+        display: block;
+        width: 22.4px;
+        height: 16px;
+        margin-right: 4px;
+        content: "";
+        background-color: currentColor;
+        mask-image: url("./logo.svg");
+        mask-repeat: no-repeat;
+        mask-size: auto 16px;
+        mask-position: 0 50%;
+      }
+    }
   }
 }
