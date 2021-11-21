@@ -2,10 +2,10 @@ import axios from 'axios';
 import { app, shell } from 'electron';
 import * as fs from 'fs';
 import * as path from 'path';
+import semver from 'semver';
+import type { Release } from '@octokit/webhooks-types';
 
-const updateURL = `https://update.electronjs.org/baranwang/pia-player/${
-  process.platform
-}-${process.arch}/${app.getVersion()}`;
+const updateURL = `https://api.github.com/repos/baranwang/pia-player/releases/latest`;
 
 interface UpdateInfo {
   name: string;
@@ -34,12 +34,25 @@ export class Updater {
   public onDownloadProgress: ((progressEvent: any) => void) | undefined;
 
   public async checkForUpdates() {
-    const data = await axios.get<UpdateInfo>(updateURL).then((res) => {
-      if (res.status === 200) {
-        return res.data;
+    const { tag_name, assets, body } = (await axios.get<Release>(updateURL))
+      .data;
+    const latestVersion = semver.coerce(tag_name)!;
+    const currentVersion = semver.coerce(app.getVersion())!;
+    if (semver.gt(latestVersion, currentVersion)) {
+      let extname: string;
+      if (process.platform === 'win32') {
+        extname = '.exe';
       }
-    });
-    this.updateData = data;
+      if (process.platform === 'darwin') {
+        extname = '.dmg';
+      }
+      const fileInfo = assets.find((asset) => asset.name.endsWith(extname));
+      this.updateData = {
+        name: latestVersion.raw,
+        notes: body,
+        url: fileInfo!.browser_download_url,
+      };
+    }
   }
 
   public async downloadUpdate() {
