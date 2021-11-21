@@ -51,20 +51,5 @@ module.exports = {
       },
     },
   ],
-  hooks: {
-    postMake(forgeConfig, options) {
-      options.forEach((item) => {
-        item.artifacts.forEach((artifact) => {
-          const extname = path.extname(artifact);
-          const {
-            packageJSON: { productName, version },
-            platform,
-            arch,
-          } = item;
-          const fileName = `${productName}-${version}-${platform}-${arch}${extname}`;
-          fs.renameSync(artifact, path.join(path.dirname(artifact), fileName));
-        });
-      });
-    },
-  },
+  hooks: {},
 };
