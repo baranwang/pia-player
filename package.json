@@ -1,7 +1,7 @@
 {
   "name": "pia-player",
   "productName": "Pia Player",
-  "version": "0.0.3",
+  "version": "0.0.1",
   "description": "Pia戏播放器",
   "main": ".webpack/main",
   "scripts": {
@@ -69,8 +69,8 @@
     "axios": "^0.24.0",
     "classnames": "^2.3.1",
     "dexie": "^3.2.0",
+    "electron-is-dev": "^2.0.0",
     "electron-log": "^4.4.1",
-    "electron-updater": "^4.6.1",
     "fs": "^0.0.1-security",
     "mobx": "^6.3.7",
     "mobx-react": "^7.2.1",

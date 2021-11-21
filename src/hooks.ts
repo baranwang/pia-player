@@ -1,4 +1,5 @@
 import { app, BrowserWindow, ipcMain, net, session } from 'electron';
+import log from 'electron-log';
 import * as fs from 'fs';
 import * as path from 'path';
 import { URL } from 'url';
@@ -59,7 +60,7 @@ export const hooks = (mainWindow: Electron.BrowserWindow) => {
     Object.keys(args.params).forEach((key) => {
       url.searchParams.append(key, args.params[key]);
     });
-    console.log('[request]', url.toString());
+    log.info('[request]', url.toString());
     return new Promise((resolve, reject) => {
       const req = net.request(url.toString());
       req.on('response', (response) => {

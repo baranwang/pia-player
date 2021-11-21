@@ -10,6 +10,9 @@ const API_PREFIX = 'https://api.aipiaxi.com/';
 const ffmpeg = createFFmpeg({
   log: true,
   corePath: new URL('/ffmpeg-core.js', window.location.href).href,
+  logger: ({ type, message }) => {
+    window.log.info(`[ffmpeg] ${type}: ${message}`);
+  },
 });
 
 const ffmpegQueue = new PQueue({ concurrency: 1 });
@@ -77,7 +80,7 @@ export const downloadBGM = async (
       responseType: 'blob',
       onDownloadProgress: (progressEvent) => {
         const ratio = progressEvent.loaded / progressEvent.total;
-        console.log('[下载]', bgm.name, ratio);
+        window.log.info('[下载]', bgm.name, ratio);
         onProgress?.({
           ratio: ratio / (transcode ? 2 : 1),
         });
@@ -94,7 +97,7 @@ export const downloadBGM = async (
         }
         await ffmpegQueue.add(async () => {
           ffmpeg.setProgress((progress) => {
-            console.log('[转码]', bgm.name, progress.ratio);
+            window.log.info('[转码]', bgm.name, progress.ratio);
             onProgress?.({ ratio: progress.ratio / 2 + 0.5 });
           });
           ffmpeg.FS(
