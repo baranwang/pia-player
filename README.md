@@ -2,6 +2,9 @@
 
 # Pia Player
 
+[![](https://img.shields.io/github/release/baranwang/pia-player.svg?logo=github&style=flat-square)](https://github.com/baranwang/pia-player/releases/latest)
+[![](https://img.shields.io/github/license/baranwang/pia-player?style=flat-square)](https://github.com/baranwang/pia-player/blob/master/LICENSE)
+
 [下载安装](https://github.com/baranwang/pia-player/releases/latest)
 
 开源 Pia 戏播放器
