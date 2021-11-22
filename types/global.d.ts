@@ -2,8 +2,6 @@ declare module '*.css';
 declare module '*.less';
 declare module '*.png';
 declare module '*.jpg';
-
-type ElectronLog = typeof import('electron-log');
 declare namespace JSX {
   interface IntrinsicElements {
     webview: Electron.WebviewTag;
@@ -12,8 +10,6 @@ declare namespace JSX {
 
 interface Window {
   ipcRenderer: Electron.IpcRenderer;
-  /**
-   *
-   */
-  log: ElectronLog;
+  log: typeof import('electron-log');
+  platform: NodeJS.Platform;
 }

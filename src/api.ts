@@ -3,6 +3,7 @@ import axios from 'axios';
 import { AppDatabase } from './db';
 import { createFFmpeg } from '@ffmpeg/ffmpeg';
 import PQueue from 'p-queue';
+import { EK } from './eventKeys';
 const db = new AppDatabase();
 
 const API_PREFIX = 'https://api.aipiaxi.com/';
@@ -21,7 +22,7 @@ export function request<T = any>(
   url: string,
   params: Record<string, any> = {}
 ): Promise<T> {
-  return ipcRenderer.invoke('request', { url, params });
+  return ipcRenderer.invoke(EK.request, { url, params });
 }
 
 export const getConfig = async () => {
@@ -66,10 +67,15 @@ export const downloadBGM = async (
 ) => {
   const data = await db.bgm.get(bgm.hash);
   if (data && data.filepath) {
-    const isExists = await ipcRenderer.invoke('checkFile', data.filepath);
-    if (isExists) {
+    const file = await ipcRenderer.invoke(EK.getFile, data.filepath) as ArrayBufferLike;
+    if (file) {
       onProgress?.({ ratio: 1 });
-      return data;
+      const url = URL.createObjectURL(new Blob([file], { type: 'audio/aac' }))
+      return {
+        ...data,
+        url,
+        filepath: url,
+      };
     }
   }
   const { headers } = await axios.head(bgm.url);
@@ -105,24 +111,25 @@ export const downloadBGM = async (
             name,
             new Uint8Array(await response.data.arrayBuffer())
           );
-          await ffmpeg.run('-i', name, '-c:a', 'aac', '-vn', `${bgm.hash}.m4a`);
-          arrayBuffer = ffmpeg.FS('readFile', `${bgm.hash}.m4a`).buffer;
+          await ffmpeg.run('-i', name, '-c:a', 'aac', '-vn', `${bgm.hash}.aac`);
+          arrayBuffer = ffmpeg.FS('readFile', `${bgm.hash}.aac`).buffer;
           ffmpeg.FS('unlink', name);
-          ffmpeg.FS('unlink', `${bgm.hash}.m4a`);
+          ffmpeg.FS('unlink', `${bgm.hash}.aac`);
         });
       }
 
-      const filepath: string = await ipcRenderer.invoke('saveFile', {
+      await ipcRenderer.invoke(EK.saveFile, {
         arrayBuffer,
         filename: bgm.hash,
       });
 
-      const res = { ...bgm, filepath };
+      const url = URL.createObjectURL(transcode ? new Blob([arrayBuffer], { type: 'audio/aac' }) : response.data)
+      const res = { ...bgm, filepath: url, url };
       db.bgm.put(res);
       return res;
     });
 };
 
 export const viewDrama = (id: number, title: string) => {
-  return ipcRenderer.send('view', { id, title });
+  return ipcRenderer.send(EK.view, { id, title });
 };

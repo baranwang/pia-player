@@ -12,6 +12,7 @@ import { PlayerPlaybackRate } from './widget/PlaybackRate';
 import { PlayerPlaylist } from './widget/Playlist';
 
 import styles from './player.module.less';
+import { EK } from '@/eventKeys';
 
 export const Player: React.FC<React.HTMLAttributes<HTMLElement>> = observer(
   () => {
@@ -106,14 +107,14 @@ export const Player: React.FC<React.HTMLAttributes<HTMLElement>> = observer(
       audio.currentTime = Math.min(audio.currentTime + 5, audio.duration);
     }, [audio]);
 
-    const previoustrack = React.useCallback(() => {
+    const previousTrack = React.useCallback(() => {
       if (playIndex === 0) {
         return;
       }
       setPlayIndex(playIndex - 1);
     }, [playIndex]);
 
-    const nexttrack = React.useCallback(() => {
+    const nextTrack = React.useCallback(() => {
       if (playlist && playIndex < playlist.length - 1) {
         setPlayIndex(playIndex + 1);
       }
@@ -142,17 +143,27 @@ export const Player: React.FC<React.HTMLAttributes<HTMLElement>> = observer(
     }, [audio]);
 
     React.useEffect(() => {
+      window.ipcRenderer.on(EK.togglePlay, () => {
+        audio.paused ? audio.play() : audio.pause();
+      });
+      window.ipcRenderer.on(EK.volumeUp, () => {
+        setVolume((value) => Math.min(1, (value || 0) + 0.1));
+      });
+      window.ipcRenderer.on(EK.volumeDown, () => {
+        setVolume((value) => Math.max(0, (value || 0) - 0.1));
+      });
+
       audio.addEventListener('playing', handlePlaying);
       audio.addEventListener('pause', handlePause);
       audio.addEventListener('durationchange', handleDurationChange);
       audio.addEventListener('timeupdate', handleCurrentTimeChange);
       audio.addEventListener('volumechange', handleVolumeChange);
-      audio.addEventListener('ended', nexttrack);
+      audio.addEventListener('ended', nextTrack);
 
       navigator.mediaSession.setActionHandler('seekbackward', seekbackward);
       navigator.mediaSession.setActionHandler('seekforward', seekforward);
-      navigator.mediaSession.setActionHandler('previoustrack', previoustrack);
-      navigator.mediaSession.setActionHandler('nexttrack', nexttrack);
+      navigator.mediaSession.setActionHandler('previoustrack', previousTrack);
+      navigator.mediaSession.setActionHandler('nexttrack', nextTrack);
 
       return () => {
         audio.src = '';
@@ -161,7 +172,7 @@ export const Player: React.FC<React.HTMLAttributes<HTMLElement>> = observer(
         audio.removeEventListener('durationchange', handleDurationChange);
         audio.removeEventListener('timeupdate', handleCurrentTimeChange);
         audio.removeEventListener('volumechange', handleVolumeChange);
-        audio.removeEventListener('ended', nexttrack);
+        audio.removeEventListener('ended', nextTrack);
       };
     }, []);
 
@@ -190,17 +201,17 @@ export const Player: React.FC<React.HTMLAttributes<HTMLElement>> = observer(
       });
     }, [bgm]);
 
-    useKeyPress(' ', togglePlay, { events: ['keyup'] });
+    // useKeyPress(' ', togglePlay, { events: ['keyup'] });
     useKeyPress('ArrowLeft', seekbackward);
     useKeyPress('ArrowRight', seekforward);
-    useKeyPress('PageUp', previoustrack);
-    useKeyPress('PageDown', nexttrack);
-    useKeyPress('ArrowUp', () => {
-      setVolume((value) => Math.min(1, (value || 0) + 0.1));
-    });
-    useKeyPress('ArrowDown', () => {
-      setVolume((value) => Math.max(0, (value || 0) - 0.1));
-    });
+    useKeyPress('PageUp', previousTrack);
+    useKeyPress('PageDown', nextTrack);
+    // useKeyPress('ArrowUp', () => {
+    //   setVolume((value) => Math.min(1, (value || 0) + 0.1));
+    // });
+    // useKeyPress('ArrowDown', () => {
+    //   setVolume((value) => Math.max(0, (value || 0) - 0.1));
+    // });
 
     if (!playlist || !bgm) return <></>;
 
@@ -241,7 +252,7 @@ export const Player: React.FC<React.HTMLAttributes<HTMLElement>> = observer(
               type="text"
               icon={<Icon type="skip_previous" />}
               disabled={playIndex === 0}
-              onClick={previoustrack}
+              onClick={previousTrack}
             />
             <Button
               type="text"
@@ -263,7 +274,7 @@ export const Player: React.FC<React.HTMLAttributes<HTMLElement>> = observer(
               type="text"
               icon={<Icon type="skip_next" />}
               disabled={playIndex === playlist.length - 1}
-              onClick={nexttrack}
+              onClick={nextTrack}
             />
           </Space>
 

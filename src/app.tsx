@@ -10,16 +10,19 @@ import { IndexPage } from './pages/index';
 import './global.less';
 import styles from './app.module.less';
 
-function render() {
-  ReactDOM.render(
+const App = () => {
+  return (
     <ConfigProvider locale={locale}>
       <Layout className={styles.app}>
         <IndexPage />
         <Player />
       </Layout>
-    </ConfigProvider>,
-    document.getElementById('root')
+    </ConfigProvider>
   );
+};
+
+function render() {
+  ReactDOM.render(<App />, document.getElementById('root'));
 }
 
 render();

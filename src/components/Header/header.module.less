@@ -11,6 +11,9 @@
     padding: 0 16px;
     background-color: @primary-color;
     -webkit-app-region: drag;
+    &:global(.darwin) {
+      justify-content: center;
+    }
     &-logo{
       display: inline-flex;
       align-items: center;

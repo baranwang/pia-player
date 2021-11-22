@@ -22,6 +22,7 @@ import {
   SelectLenthRange,
   SelectRole,
 } from '@/components/TableWidget';
+import { EK } from '@/eventKeys';
 
 import styles from './index.module.less';
 
@@ -101,7 +102,7 @@ export const IndexPage = observer(() => {
   React.useEffect(() => {
     globalStore.getConfig().then((config) => {
       setConfig(config);
-      ipcRenderer.on('search', (event, arg) => {
+      ipcRenderer.on(EK.search, (event, arg) => {
         const url = new URL(arg);
         if (url.pathname === '/advance/search') {
           const tags = Object.values(config).flat();

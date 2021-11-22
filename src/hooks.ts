@@ -3,6 +3,7 @@ import log from 'electron-log';
 import * as fs from 'fs';
 import * as path from 'path';
 import { URL } from 'url';
+import { EK } from './eventKeys';
 
 export const hooks = (mainWindow: Electron.BrowserWindow) => {
   session.defaultSession.webRequest.onHeadersReceived((details, callback) => {
@@ -55,7 +56,8 @@ export const hooks = (mainWindow: Electron.BrowserWindow) => {
     }
   );
 
-  ipcMain.handle('request', async (event, args) => {
+
+  ipcMain.handle(EK.request, async (event, args) => {
     const url = new URL(args.url);
     Object.keys(args.params).forEach((key) => {
       url.searchParams.append(key, args.params[key]);
@@ -87,7 +89,7 @@ export const hooks = (mainWindow: Electron.BrowserWindow) => {
   });
 
   ipcMain.handle(
-    'saveFile',
+    EK.saveFile,
     (
       event,
       args: {
@@ -95,11 +97,9 @@ export const hooks = (mainWindow: Electron.BrowserWindow) => {
         filename: string;
       }
     ) => {
-      const filepath = path.resolve(
-        app.getPath('userData'),
-        'BGM Cache',
-        args.filename
-      );
+      const dir = path.resolve(app.getPath('userData'), 'BGM Cache');
+      fs.existsSync(dir) || fs.mkdirSync(dir);
+      const filepath = path.resolve(dir, args.filename);
       try {
         fs.writeFileSync(filepath, Buffer.from(args.arrayBuffer));
         return filepath;
@@ -110,12 +110,16 @@ export const hooks = (mainWindow: Electron.BrowserWindow) => {
     }
   );
 
-  ipcMain.handle('checkFile', (event, filename) => {
+  ipcMain.handle(EK.getFile, (event, filename) => {
     const dir = path.resolve(app.getPath('userData'), 'BGM Cache');
     fs.existsSync(dir) || fs.mkdirSync(dir);
     const filepath = path.resolve(dir, filename);
     try {
-      return fs.existsSync(filepath);
+      if (fs.existsSync(filepath)) {
+        return fs.readFileSync(filepath).buffer;
+      } else {
+        return false
+      }
     } catch (error) {
       console.error(error);
       return false;
@@ -123,7 +127,7 @@ export const hooks = (mainWindow: Electron.BrowserWindow) => {
   });
 
   ipcMain.on(
-    'view',
+    EK.view,
     async (
       event,
       args: {
@@ -133,7 +137,7 @@ export const hooks = (mainWindow: Electron.BrowserWindow) => {
     ) => {
       // eslint-disable-next-line @typescript-eslint/no-var-requires
       const { screen } = require('electron');
-      const dramaWindow = new BrowserWindow({
+      const viewWindow = new BrowserWindow({
         parent: mainWindow,
         title: args.title,
         width: 960,
@@ -145,12 +149,12 @@ export const hooks = (mainWindow: Electron.BrowserWindow) => {
           webSecurity: false,
         },
       });
-      dramaWindow.removeMenu();
-      dramaWindow.loadURL(`https://aipiaxi.com/Index/post/id/${args.id}`);
-      dramaWindow.webContents.on('did-finish-load', () => {
-        dramaWindow.setTitle(args.title);
+      viewWindow.removeMenu();
+      viewWindow.loadURL(`https://aipiaxi.com/Index/post/id/${args.id}`);
+      viewWindow.webContents.on('did-finish-load', () => {
+        viewWindow.setTitle(args.title);
       });
-      dramaWindow.webContents.insertCSS(
+      viewWindow.webContents.insertCSS(
         `.player-bar,
         .nav,
         .footer,
@@ -175,14 +179,14 @@ export const hooks = (mainWindow: Electron.BrowserWindow) => {
         }
         `
       );
-      dramaWindow.webContents.session.webRequest.onBeforeRequest(
+      viewWindow.webContents.session.webRequest.onBeforeRequest(
         {
           urls: ['https://aipiaxi.com/advance/search*'],
         },
         (details, callback) => {
-          mainWindow.webContents.send('search', details.url);
+          mainWindow.webContents.send(EK.search, details.url);
           callback({ cancel: true });
-          dramaWindow.destroy();
+          viewWindow.destroy();
         }
       );
     }
