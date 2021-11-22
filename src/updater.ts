@@ -6,7 +6,6 @@ import semver from 'semver';
 import type { Release } from '@octokit/webhooks-types';
 
 const updateURL = `https://api.github.com/repos/baranwang/pia-player/releases/latest`;
-
 interface UpdateInfo {
   name: string;
   notes: string;
@@ -69,7 +68,7 @@ export class Updater {
           const file = fs.createWriteStream(filePath);
           file.write(res.data);
           file.close();
-          this.updateFilePath = `file://${filePath}`;
+          this.updateFilePath = filePath;
         }
       });
   }
@@ -90,7 +89,8 @@ export class Updater {
   public async quitAndInstall() {
     if (!this.updateFilePath) return;
     const filePath = this.updateFilePath;
-    app.quit();
-    shell.openExternal(filePath);
+    shell.openPath(filePath).then(() => {
+      app.quit();
+    })
   }
 }
