@@ -10,7 +10,7 @@ const API_PREFIX = 'https://api.aipiaxi.com/';
 
 const ffmpeg = createFFmpeg({
   log: true,
-  corePath: new URL('/ffmpeg-core.js', window.location.href).href,
+  corePath: `${window.location.href.split('main_window')[0]}/ffmpeg-core.js`,
   logger: ({ type, message }) => {
     window.log.info(`[ffmpeg] ${type}: ${message}`);
   },
@@ -66,17 +66,17 @@ export const downloadBGM = async (
   onProgress?: (options: { ratio: number }) => void
 ) => {
   const data = await db.bgm.get(bgm.hash);
-  if (data && data.filepath) {
-    const file = await ipcRenderer.invoke(EK.getFile, data.filepath) as ArrayBufferLike;
-    if (file) {
-      onProgress?.({ ratio: 1 });
-      const url = URL.createObjectURL(new Blob([file], { type: 'audio/aac' }))
-      return {
-        ...data,
-        url,
-        filepath: url,
-      };
+  try {
+    if (data && data.filepath) {
+      const { pathname } = new URL(data.filepath)
+      const isExists = await ipcRenderer.invoke(EK.checkFile, decodeURIComponent(pathname));
+      if (isExists) {
+        onProgress?.({ ratio: 1 });
+        return data;
+      }
     }
+  } catch (error) {
+    // do nothing
   }
   const { headers } = await axios.head(bgm.url);
   const contentType = headers['Content-Type'] || headers['content-type'];
@@ -118,13 +118,11 @@ export const downloadBGM = async (
         });
       }
 
-      await ipcRenderer.invoke(EK.saveFile, {
+      const filepath = await ipcRenderer.invoke(EK.saveFile, {
         arrayBuffer,
         filename: bgm.hash,
       });
-
-      const url = URL.createObjectURL(transcode ? new Blob([arrayBuffer], { type: 'audio/aac' }) : response.data)
-      const res = { ...bgm, filepath: url, url };
+      const res = { ...bgm, filepath: `stream://${filepath}`, };
       db.bgm.put(res);
       return res;
     });
