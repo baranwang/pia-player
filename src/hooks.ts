@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain, net, session } from 'electron';
+import { app, BrowserWindow, ipcMain, net, protocol, session } from 'electron';
 import log from 'electron-log';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -6,11 +6,22 @@ import { URL } from 'url';
 import { EK } from './eventKeys';
 
 export const hooks = (mainWindow: Electron.BrowserWindow) => {
+  protocol.registerStreamProtocol('stream', (request, callback) => {
+    const url = new URL(request.url);
+    const filepath = decodeURIComponent(url.pathname)
+    callback({
+      data: fs.createReadStream(filepath),
+      headers: {
+        'Content-Length': `${fs.statSync(filepath).size}`,
+      }
+    })
+  })
+
   session.defaultSession.webRequest.onHeadersReceived((details, callback) => {
     callback({
       responseHeaders: Object.assign(details.responseHeaders, {
         'Content-Security-Policy': [
-          "default-src 'self' 'unsafe-inline' 'unsafe-eval' http: https: file: ws: data: blob:",
+          "default-src 'self' 'unsafe-inline' 'unsafe-eval' http: https: ws: data: blob: stream:",
         ],
       }),
     });
@@ -110,16 +121,12 @@ export const hooks = (mainWindow: Electron.BrowserWindow) => {
     }
   );
 
-  ipcMain.handle(EK.getFile, (event, filename) => {
+  ipcMain.handle(EK.checkFile, (event, filename) => {
     const dir = path.resolve(app.getPath('userData'), 'BGM Cache');
     fs.existsSync(dir) || fs.mkdirSync(dir);
     const filepath = path.resolve(dir, filename);
     try {
-      if (fs.existsSync(filepath)) {
-        return fs.readFileSync(filepath).buffer;
-      } else {
-        return false
-      }
+      return fs.existsSync(filepath);
     } catch (error) {
       console.error(error);
       return false;

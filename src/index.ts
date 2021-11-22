@@ -1,4 +1,4 @@
-import { app, BrowserWindow, dialog, globalShortcut, Menu, shell } from 'electron';
+import { app, BrowserWindow, dialog, globalShortcut, Menu, protocol, shell } from 'electron';
 import installExtension, {
   REACT_DEVELOPER_TOOLS,
 } from 'electron-devtools-installer';
@@ -67,6 +67,10 @@ const menu = Menu.buildFromTemplate([...(process.platform === 'darwin' ? [{
 }])
 Menu.setApplicationMenu(menu);
 
+protocol.registerSchemesAsPrivileged([
+  { scheme: 'stream', privileges: { stream: true } },
+])
+
 const createWindow = (): void => {
   mainWindow = new BrowserWindow({
     height: 720,
@@ -102,7 +106,7 @@ app.on('activate', () => {
   }
 });
 
-app.whenReady().then(() => {  
+app.whenReady().then(() => {
   if (isDev) {
     installExtension(REACT_DEVELOPER_TOOLS)
       .then((name) => console.log(`Added Extension:  ${name}`))

@@ -6,6 +6,7 @@ import { Button, message, Space } from 'antd';
 import { Icon } from '../Icon/Icon';
 import { useKeyPress, useLocalStorageState, useMap, usePrevious } from 'ahooks';
 import Marquee from 'react-fast-marquee';
+import PQueue from 'p-queue';
 import { PlayerVolume } from './widget/Volume';
 import { PlayerProgress } from './widget/Progress';
 import { PlayerPlaybackRate } from './widget/PlaybackRate';
@@ -13,6 +14,8 @@ import { PlayerPlaylist } from './widget/Playlist';
 
 import styles from './player.module.less';
 import { EK } from '@/eventKeys';
+
+const donwloadQueue = new PQueue({ concurrency: 3 });
 
 export const Player: React.FC<React.HTMLAttributes<HTMLElement>> = observer(
   () => {
@@ -33,14 +36,18 @@ export const Player: React.FC<React.HTMLAttributes<HTMLElement>> = observer(
       const list = playlistStore.playlist || [];
       setPlaylist(list.map((item) => ({ ...item, filepath: item.url })));
       setPlayIndex(0);
-      Promise.all(
-        (playlistStore.playlist || []).map(async (item) => {
+      playlistStore.playlist?.forEach(async (item, index) => {
+        const data = await donwloadQueue.add(async () => {
           const { filepath } = await downloadBGM(item, (options) => {
             setProgress(item.hash, options.ratio);
           });
           return { ...item, filepath };
-        })
-      ).then(setPlaylist);
+        });
+        setPlaylist((list) => {
+          (list || [])[index] = data;
+          return [...list!];
+        });
+      });
     }, [playlistStore.playlist]);
 
     const activeDrama = React.useMemo(

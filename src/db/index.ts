@@ -7,7 +7,7 @@ export class AppDatabase extends Dexie {
 
   constructor() {
     super('AppDatabase');
-    this.version(1).stores({
+    this.version(2).stores({
       drama: 'id',
       bgm: 'hash',
     });

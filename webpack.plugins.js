@@ -14,7 +14,7 @@ module.exports = [
           'core',
           'dist'
         ),
-        to: path.resolve(__dirname, '.webpack', 'renderer', 'main_window'),
+        to: path.resolve(__dirname, '.webpack', 'renderer'),
       },
     ],
   }),
