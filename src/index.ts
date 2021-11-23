@@ -84,8 +84,7 @@ const createWindow = (): void => {
     },
     webPreferences: {
       webSecurity: false,
-      webviewTag: true,
-      contextIsolation: false,
+      contextIsolation: true,
       preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
     },
   });

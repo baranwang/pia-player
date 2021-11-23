@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain, net, protocol, session } from 'electron';
+import { app, BrowserWindow, ipcMain, ipcRenderer, net, protocol, session } from 'electron';
 import log from 'electron-log';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -66,38 +66,6 @@ export const hooks = (mainWindow: Electron.BrowserWindow) => {
       callback({ redirectURL: url });
     }
   );
-
-
-  ipcMain.handle(EK.request, async (event, args) => {
-    const url = new URL(args.url);
-    Object.keys(args.params).forEach((key) => {
-      url.searchParams.append(key, args.params[key]);
-    });
-    log.info('[request]', url.toString());
-    return new Promise((resolve, reject) => {
-      const req = net.request(url.toString());
-      req.on('response', (response) => {
-        const res: Buffer[] = [];
-        response.on('data', (chuck) => {
-          res.push(chuck);
-        });
-        response.on('error', reject);
-        response.on('end', () => {
-          const data = Buffer.concat(res);
-          try {
-            resolve(JSON.parse(data.toString()));
-          } catch (error) {
-            if (response.statusCode < 400) {
-              resolve(data);
-            } else {
-              reject(data.toString());
-            }
-          }
-        });
-      });
-      req.end();
-    });
-  });
 
   ipcMain.handle(
     EK.saveFile,

@@ -1,5 +1,4 @@
 export const EK = {
-  request: 'request',
   saveFile: 'saveFile',
   checkFile: 'checkFile',
   view: 'view',
