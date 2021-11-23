@@ -67,9 +67,10 @@ export const downloadBGM = async (
 ) => {
   const data = await db.bgm.get(bgm.hash);
   try {
-    if (data && data.filepath) {
-      const { pathname } = new URL(data.filepath)
-      const isExists = await ipcRenderer.invoke(EK.checkFile, decodeURIComponent(pathname));
+    const regexp = new RegExp('^stream://')
+    if (data && data.filepath && regexp.test(data.filepath)) {
+      const pathname = decodeURIComponent(data.filepath.replace(regexp, ''))
+      const isExists = await ipcRenderer.invoke(EK.checkFile, pathname);
       if (isExists) {
         onProgress?.({ ratio: 1 });
         return data;
@@ -122,7 +123,7 @@ export const downloadBGM = async (
         arrayBuffer,
         filename: bgm.hash,
       });
-      const res = { ...bgm, filepath: `stream://${filepath}`, };
+      const res = { ...bgm, filepath: `stream://${encodeURIComponent(filepath)}`, };
       db.bgm.put(res);
       return res;
     });
