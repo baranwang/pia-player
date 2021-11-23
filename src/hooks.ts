@@ -7,8 +7,8 @@ import { EK } from './eventKeys';
 
 export const hooks = (mainWindow: Electron.BrowserWindow) => {
   protocol.registerStreamProtocol('stream', (request, callback) => {
-    const url = new URL(request.url);
-    const filepath = decodeURIComponent(url.pathname)
+    const url = request.url.replace(new RegExp('^stream://'), '');
+    const filepath = decodeURIComponent(url)
     callback({
       data: fs.createReadStream(filepath),
       headers: {
