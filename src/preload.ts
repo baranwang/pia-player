@@ -1,4 +1,4 @@
-import { contextBridge, ipcRenderer, net } from 'electron';
+import { contextBridge, ipcRenderer } from 'electron';
 import log from 'electron-log';
 
 contextBridge.exposeInMainWorld('platform', process.platform);
