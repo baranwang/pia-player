@@ -16,6 +16,9 @@ module.exports = {
     },
     {
       name: '@electron-forge/maker-dmg',
+      config: {
+        background: path.resolve('build', 'dmg-background.png'),
+      },
     },
   ],
   plugins: [
