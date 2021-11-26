@@ -10,4 +10,4 @@ contextBridge.exposeInMainWorld('ipcRenderer', {
   sendSync: ipcRenderer.sendSync.bind(ipcRenderer),
   removeListener: ipcRenderer.removeListener.bind(ipcRenderer),
   invoke: ipcRenderer.invoke.bind(ipcRenderer),
-})
+});
