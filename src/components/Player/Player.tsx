@@ -4,35 +4,30 @@ import { downloadBGM } from '@/api';
 import { useStores } from '@/store';
 import { Button, message, Space } from 'antd';
 import { Icon } from '../Icon/Icon';
-import { useKeyPress, useLocalStorageState, useMap, usePrevious } from 'ahooks';
+import { useLocalStorageState, useMap } from 'ahooks';
 import Marquee from 'react-fast-marquee';
 import PQueue from 'p-queue';
 import { PlayerVolume } from './widget/Volume';
 import { PlayerProgress } from './widget/Progress';
 import { PlayerPlaybackRate } from './widget/PlaybackRate';
 import { PlayerPlaylist } from './widget/Playlist';
+import { useAudio } from './audio';
 
 import styles from './player.module.less';
 import { EK } from '@/eventKeys';
-import { AudioPlayer } from './audio';
 
 const donwloadQueue = new PQueue({ concurrency: 3 });
 
-const audioPlayer = new AudioPlayer();
-const AudioPlayerCtx = React.createContext(audioPlayer);
-
-export const Player: React.FC = observer(() => {
-  return (
-    <AudioPlayerCtx.Provider value={audioPlayer}>
-      <PlayerView />
-    </AudioPlayerCtx.Provider>
-  );
-});
-
-const PlayerView: React.FC<React.HTMLAttributes<HTMLElement>> = observer(() => {
+export const Player = observer(() => {
   const { playlistStore } = useStores();
 
-  const audio = React.useContext(AudioPlayerCtx);
+  const audio = useAudio({
+    onError: (e) => {
+      if (e.name === 'NotSupportedError') {
+        message.warning('该音频文件不支持在线播放，正在等待缓存解码');
+      }
+    },
+  });
 
   const [progressMap, { set: setProgress }] = useMap<string, number>();
 
@@ -42,17 +37,30 @@ const PlayerView: React.FC<React.HTMLAttributes<HTMLElement>> = observer(() => {
   );
 
   React.useEffect(() => {
-    const list = playlistStore.playlist || [];
-    audio.playlist = list.map((item) => ({ ...item, filepath: item.url }));
-    audio.playIndex = 0;
-    playlistStore.playlist?.forEach(async (item, index) => {
+    const { playlist } = playlistStore;
+    if (!playlist) return;
+    audio.setPlaylist(
+      playlist.map((item) => ({
+        key: item.hash,
+        src: item.filepath || item.url,
+      }))
+    );
+    audio.setPlayIndex(0);
+    playlist.forEach(async (item, index) => {
       const data = await donwloadQueue.add(async () => {
         const { filepath } = await downloadBGM(item, (options) => {
           setProgress(item.hash, options.ratio);
         });
         return { ...item, filepath };
       });
-      audio.playlist[index] = data;
+      audio.setPlaylist((list) => {
+        const newList = [...list];
+        newList[index] = {
+          key: data.hash,
+          src: data.filepath || data.url,
+        };
+        return newList;
+      });
     });
   }, [playlistStore.playlist]);
 
@@ -61,11 +69,9 @@ const PlayerView: React.FC<React.HTMLAttributes<HTMLElement>> = observer(() => {
     [playlistStore.activeDrama]
   );
 
-  const bgm = React.useMemo(() => audio.current, [audio]);
-
-  // const prevBgm = usePrevious(bgm, (prev, next) => {
-  //   return prev?.filepath !== next?.filepath;
-  // });
+  const activeBGM = React.useMemo(() => {
+    return playlistStore.playlist?.[audio.playIndex] || null;
+  }, [playlistStore.playlist, audio.playIndex]);
 
   const [activeDevice, setActiveDevice] = useLocalStorageState<
     MediaDeviceInfo['deviceId'] | null
@@ -73,15 +79,21 @@ const PlayerView: React.FC<React.HTMLAttributes<HTMLElement>> = observer(() => {
 
   React.useEffect(() => {
     if (activeDevice) {
-      (audio as any).setSinkId(activeDevice);
+      audio.setSinkId(activeDevice);
     }
   }, [activeDevice]);
 
-  const [playbackRate, setPlaybackRate] = React.useState(1);
+  React.useEffect(() => {
+    navigator.mediaSession.metadata = new MediaMetadata({
+      title: activeBGM?.name,
+      artist: activeDrama?.name,
+      artwork: [{ src: activeDrama?.photo || '' }],
+    });
+  }, [activeBGM]);
 
   React.useEffect(() => {
     window.ipcRenderer.on(EK.togglePlay, () => {
-      audio.isPlaying ? audio.pause() : audio.play();
+      audio.togglePlay();
     });
     window.ipcRenderer.on(EK.volumeUp, () => {
       audio.setVolume((value) => Math.min(1, (value || 0) + 0.1));
@@ -89,56 +101,61 @@ const PlayerView: React.FC<React.HTMLAttributes<HTMLElement>> = observer(() => {
     window.ipcRenderer.on(EK.volumeDown, () => {
       audio.setVolume((value) => Math.max(0, (value || 0) - 0.1));
     });
-
-    return () => {
-      audio.playlist = [];
-    };
+    window.ipcRenderer.on(EK.nextTrack, () => {
+      audio.setPlayIndex((index) => index + 1);
+    });
+    window.ipcRenderer.on(EK.prevTrack, () => {
+      audio.setPlayIndex((index) => index - 1);
+    });
+    window.ipcRenderer.on(EK.seekForward, () => {
+      audio.seekForward();
+    });
+    window.ipcRenderer.on(EK.seekBackward, () => {
+      audio.seekBackward();
+    });
   }, []);
 
   React.useEffect(() => {
-    audio.playbackRate = playbackRate;
-  }, [playbackRate]);
+    const controls: MenusControls = [];
+    const canPlay = !!audio.current?.key;
+    if (canPlay) {
+      controls.push('togglePlay');
+    }
+    if (canPlay && !audio.disabledNext) {
+      controls.push('nextTrack');
+    }
+    if (canPlay && !audio.disabledPrev) {
+      controls.push('prevTrack');
+    }
+    if (audio.volume > 0) {
+      controls.push('volumeDown');
+    }
+    if (audio.volume < 1) {
+      controls.push('volumeUp');
+    }
+    window.ipcRenderer.send(EK.changeMenu, {
+      controls,
+      isPlaying: audio.isPlaying,
+    });
+  }, [
+    audio.current?.key,
+    audio.disabledNext,
+    audio.disabledPrev,
+    audio.volume,
+    audio.isPlaying,
+  ]);
 
-  // React.useEffect(() => {
-  //   if (!bgm || !bgm.filepath) return;
-  //   let time = 0;
-  //   if (prevBgm?.hash === bgm.hash) {
-  //     time = audio.currentTime;
-  //   }
-  //   audio.src = bgm.filepath;
-  //   audio.currentTime = time;
-  //   play();
-
-  //   navigator.mediaSession.metadata = new MediaMetadata({
-  //     title: bgm.name,
-  //     artist: activeDrama?.nickname,
-  //     artwork: [{ src: activeDrama?.photo || '' }],
-  //   });
-  // }, [bgm]);
-
-  // useKeyPress(' ', togglePlay, { events: ['keyup'] });
-  // useKeyPress('ArrowLeft', seekbackward);
-  // useKeyPress('ArrowRight', seekforward);
-  // useKeyPress('PageUp', previousTrack);
-  // useKeyPress('PageDown', nextTrack);
-  // useKeyPress('ArrowUp', () => {
-  //   setVolume((value) => Math.min(1, (value || 0) + 0.1));
-  // });
-  // useKeyPress('ArrowDown', () => {
-  //   setVolume((value) => Math.max(0, (value || 0) - 0.1));
-  // });
-
-  // if (!audio.playlist || !bgm) return <></>;
+  if (!audio.current) return <></>;
 
   return (
     <div className={styles.player}>
-      {JSON.stringify(audio)}
       <PlayerProgress
-        duration={audio.duration}
+        duration={audio.duration ?? 0}
         currentTime={audio.currentTime}
         playStatus={audio.isPlaying}
         onProgressChange={(value) => {
-          audio.currentTime = value;
+          audio.setCurrentTime(value);
+          audio.el.currentTime = value;
         }}
         onPlay={audio.play}
         onPause={audio.pause}
@@ -147,7 +164,7 @@ const PlayerView: React.FC<React.HTMLAttributes<HTMLElement>> = observer(() => {
         <Space className={styles['player-meta']}>
           <img
             className={styles['player-meta-cover']}
-            src={activeDrama?.photo || require('./default-cover.png')}
+            src={activeDrama?.photo || require('./assets/default-cover.png')}
           />
           <Marquee
             className={styles['player-meta-title']}
@@ -158,7 +175,7 @@ const PlayerView: React.FC<React.HTMLAttributes<HTMLElement>> = observer(() => {
                 .map((v) => +v) as any
             }
             play={audio.isPlaying}>
-            {bgm?.name}
+            {activeBGM?.name}
           </Marquee>
         </Space>
 
@@ -166,7 +183,7 @@ const PlayerView: React.FC<React.HTMLAttributes<HTMLElement>> = observer(() => {
           <Button
             type="text"
             icon={<Icon type="skip_previous" />}
-            disabled={audio.playIndex === 0}
+            disabled={audio.disabledPrev}
             onClick={audio.prev}
           />
           <Button
@@ -188,29 +205,28 @@ const PlayerView: React.FC<React.HTMLAttributes<HTMLElement>> = observer(() => {
           <Button
             type="text"
             icon={<Icon type="skip_next" />}
-            disabled={audio.playIndex === audio.playlist.length - 1}
+            disabled={audio.disabledNext}
             onClick={audio.next}
           />
         </Space>
 
         <Space className={styles['player-actions-right']}>
-          <PlayerPlaybackRate value={playbackRate} onChange={setPlaybackRate} />
+          <PlayerPlaybackRate
+            value={audio.playbackRate}
+            onChange={audio.setPlaybackRate}
+          />
           <PlayerVolume
-            value={audio.volume || 0}
-            onVolumeChange={(value) => {
-              audio.volume = value;
-            }}
+            value={audio.volume ?? 0}
+            onVolumeChange={audio.setVolume}
             device={activeDevice}
             onDeviceChange={setActiveDevice}
           />
 
           <PlayerPlaylist
-            playlist={audio.playlist}
+            playlist={playlistStore.playlist || []}
             index={audio.playIndex}
             progress={progress}
-            onChange={(index) => {
-              audio.playIndex = index;
-            }}
+            onChange={audio.setPlayIndex}
           />
         </Space>
       </div>

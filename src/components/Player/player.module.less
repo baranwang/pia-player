@@ -60,8 +60,13 @@
     &-item {
       display: flex;
       min-width: 240px;
+      max-width: 320px;
       &-text {
         flex: auto;
+        margin-right: 16px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
       }
       &-progress {
         flex: 0 0 16px;

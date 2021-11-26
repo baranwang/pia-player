@@ -1,144 +1,185 @@
-import { message } from 'antd';
+import { useLocalStorageState, usePrevious } from 'ahooks';
+import React from 'react';
 
-export class AudioPlayer {
-  private audio = new Audio();
+export const useAudio = ({ onError }: {
+  onError?: (e: Error) => void;
+} = {}) => {
+  const [audio] = React.useState(
+    <HTMLAudioElement & { setSinkId(deviceId: string): void }>new Audio()
+  );
 
-  public playlist: BGM[] = [];
+  const [playlist, setPlaylist] = React.useState<
+    {
+      key: string;
+      src: string;
+    }[]
+  >([]);
 
-  private _playIndex = 0;
+  const [playIndex, setPlayIndex] = React.useState(0);
 
-  public get playIndex() {
-    return this._playIndex;
-  }
-
-  public set playIndex(value: number) {
-    this._playIndex = value;
-    if (this.current?.filepath) {
-      this.audio.src = this.current.filepath;
-    }
-  }
-
-  public get current() {
-    const bgm = this.playlist[this.playIndex];
-    return bgm;
-  }
-
-  public get isPlaying() {
-    return !this.audio.paused;
-  }
-
-  public get volume() {
-    return this.audio.volume;
-  }
-
-  public set volume(value: number) {
-    this.audio.volume = value ?? 1;
-  }
-
-  public get duration() {
-    return this.audio.duration ?? 0;
-  }
-
-  public get currentTime() {
-    return this.audio.currentTime ?? 0;
-  }
-
-  public set currentTime(value: number) {
-    this.audio.currentTime = value;
-  }
-
-  public get playbackRate() {
-    return this.audio.playbackRate;
-  }
-
-  public set playbackRate(value: number) {
-    this.audio.playbackRate = value;
-  }
-
-  public play() {
-    this.audio.play().catch((e: Error) => {
-      if (e.name === 'NotSupportedError') {
-        message.warning('该音频文件不支持在线播放，正在等待缓存解码');
+  React.useEffect(() => {
+    if (playlist.length > 0) {
+      if (playIndex < 0) {
+        setPlayIndex(0);
       }
-    });
-  }
-
-  public pause() {
-    this.audio.pause();
-  }
-
-  public togglePlay() {
-    console.log(this);
-
-    if (!this.current) {
-      return;
+      if (playIndex >= playlist.length) {
+        setPlayIndex(playlist.length - 1);
+      }
     }
-    this.isPlaying ? this.pause() : this.play();
-  }
+  }, [playlist, playIndex]);
 
-  public next() {
-    if (this.playlist && this.playIndex < this.playlist.length - 1) {
-      this.playIndex += 1;
-      this.play();
+  const current = React.useMemo(
+    () => playlist[playIndex],
+    [playlist, playIndex]
+  );
+
+  const prevAudio = usePrevious(current, (prev, next) => {
+    return prev?.src !== next?.src;
+  })
+
+  const disabledNext = React.useMemo(() => {
+    return playIndex === playlist.length - 1;
+  }, [playIndex, playlist]);
+
+  const disabledPrev = React.useMemo(() => {
+    return playIndex === 0;
+  }, [playIndex]);
+
+  React.useEffect(() => {
+    if (current) {
+      let time = 0;
+      if (prevAudio?.key === current.key) {
+        time = audio.currentTime;
+      }
+      audio.src = current.src;
+      audio.currentTime = time;
+      play();
     }
-  }
+  }, [current]);
 
-  public prev() {
-    if (this.playlist && this.playIndex > 0) {
-      this.playIndex -= 1;
-      this.play();
+  const [isPlaying, setIsPlaying] = React.useState(false)
+  const [volume, setVolume] = useLocalStorageState('volume', audio.volume);
+  const [duration, setDuration] = React.useState(audio.duration);
+  const [currentTime, setCurrentTime] = React.useState(audio.currentTime);
+
+  const play = React.useCallback(() => {
+    return audio.play().catch((e: Error) => onError?.(e));
+  }, [audio])
+
+  const pause = React.useCallback(() => {
+    audio.pause();
+  }, [audio])
+
+  const togglePlay = React.useCallback(() => {
+    if (audio.paused) {
+      play();
+    } else {
+      pause();
     }
-  }
+  }, [audio]);
 
-  public seekBackward() {
-    this.currentTime = Math.max(0, this.currentTime - 5);
-  }
+  const next = React.useCallback(() => {
+    if (playIndex < playlist.length - 1) {
+      setPlayIndex(playIndex + 1);
+    }
+  }, [playlist, playIndex]);
 
-  public seekForward() {
-    this.currentTime = Math.min(this.currentTime + 5, this.duration);
-  }
+  const prev = React.useCallback(() => {
+    if (playIndex > 0) {
+      setPlayIndex(playIndex - 1);
+    }
+  }, [playlist, playIndex]);
 
-  public setVolume(arg: number | ((volume: number) => number)) {
-    typeof arg === 'function'
-      ? (this.volume = arg(this.volume))
-      : (this.volume = arg);
-  }
+  const seekBackward = React.useCallback(() => {
+    audio.currentTime = Math.max(0, audio.currentTime - 5);
+  }, [audio]);
 
-  public setSinkId(sinkId: string) {
-    (this.audio as any).setSinkId(sinkId).catch((e: Error) => {
-      console.error(e);
-    });
-  }
+  const seekForward = React.useCallback(() => {
+    audio.currentTime = Math.min(audio.currentTime + 5, audio.duration);
+  }, [audio]);
 
-  constructor() {
-    this.audio.addEventListener('ended', () => {
-      this.next();
-    });
-    navigator.mediaSession.setActionHandler('play', () => {
-      this.play();
-    });
-    navigator.mediaSession.setActionHandler('pause', () => {
-      this.pause();
-    });
-    navigator.mediaSession.setActionHandler('previoustrack', () => {
-      this.prev();
-    });
-    navigator.mediaSession.setActionHandler('nexttrack', () => {
-      this.next();
-    });
-    navigator.mediaSession.setActionHandler('seekbackward', () => {
-      this.seekBackward();
-    });
-    navigator.mediaSession.setActionHandler('seekforward', () => {
-      this.seekForward();
-    });
+  const handlerTimeUpdate = React.useCallback(() => {
+    setCurrentTime(audio.currentTime);
+  }, [audio]);
 
-    this.togglePlay = this.togglePlay.bind(this);
-    this.next = this.next.bind(this);
-    this.prev = this.prev.bind(this);
-    this.seekBackward = this.seekBackward.bind(this);
-    this.seekForward = this.seekForward.bind(this);
-    this.setVolume = this.setVolume.bind(this);
-    this.setSinkId = this.setSinkId.bind(this);
+  const handlerDurationChange = React.useCallback(() => {
+    setDuration(audio.duration);
+  }, [audio]);
+
+  const handlerVolumeChange = React.useCallback(() => {
+    setVolume(audio.volume);
+  }, [audio]);
+
+  const handlerPlayStatus = React.useCallback(() => {
+    setIsPlaying(!audio.paused);
+  }, []);
+
+  React.useEffect(() => {
+    audio.addEventListener('ended', next);
+    audio.addEventListener('timeupdate', handlerTimeUpdate)
+    audio.addEventListener('durationchange', handlerDurationChange)
+    audio.addEventListener('volumechange', handlerVolumeChange)
+    audio.addEventListener('play', handlerPlayStatus)
+    audio.addEventListener('pause', handlerPlayStatus)
+    audio.addEventListener('playing', handlerPlayStatus)
+
+    if ('mediaSession' in navigator) {
+      navigator.mediaSession.setActionHandler('play', play);
+      navigator.mediaSession.setActionHandler('pause', pause);
+      navigator.mediaSession.setActionHandler('previoustrack', prev);
+      navigator.mediaSession.setActionHandler('nexttrack', next);
+      navigator.mediaSession.setActionHandler('seekbackward', seekBackward);
+      navigator.mediaSession.setActionHandler('seekforward', seekForward);
+    }
+
+    return () => {
+      audio.removeEventListener('ended', next);
+      audio.removeEventListener('timeupdate', handlerTimeUpdate)
+      audio.removeEventListener('durationchange', handlerDurationChange)
+      audio.removeEventListener('volumechange', handlerVolumeChange)
+      audio.removeEventListener('play', handlerPlayStatus)
+      audio.removeEventListener('pause', handlerPlayStatus)
+      audio.removeEventListener('playing', handlerPlayStatus)
+    }
+  }, []);
+
+  const [playbackRate, setPlaybackRate] = React.useState(audio.playbackRate);
+  React.useEffect(() => {
+    audio.playbackRate = playbackRate;
+  }, [playbackRate]);
+
+  const [sinkId, setSinkId] = React.useState('');
+  React.useEffect(() => {
+    if (sinkId) {
+      audio.setSinkId(sinkId);
+    }
+  }, [sinkId]);
+
+  return {
+    el: audio,
+    playlist,
+    playIndex,
+    current,
+    disabledNext,
+    disabledPrev,
+    isPlaying,
+    duration,
+    currentTime,
+    volume,
+    playbackRate,
+    sinkId,
+    play,
+    pause,
+    setPlaylist,
+    setPlayIndex,
+    setVolume,
+    togglePlay,
+    next,
+    prev,
+    seekBackward,
+    seekForward,
+    setCurrentTime,
+    setPlaybackRate,
+    setSinkId,
   }
-}
+};

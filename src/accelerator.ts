@@ -4,7 +4,7 @@ export const accelerator = {
   'CmdOrCtrl+r': () => {
     BrowserWindow.getFocusedWindow()?.webContents.reload()
   },
-  'CommandOrControl+F12': () => {
+  'CmdOrCtrl+F12': () => {
     BrowserWindow.getFocusedWindow()?.webContents.toggleDevTools()
   }
 }

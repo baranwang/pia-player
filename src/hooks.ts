@@ -1,8 +1,33 @@
-import { app, BrowserWindow, ipcMain, protocol, session } from 'electron';
+/* eslint-disable @typescript-eslint/no-var-requires */
+import {
+  app,
+  BrowserWindow,
+  ipcMain,
+  Menu,
+  nativeImage,
+  protocol,
+  session,
+} from 'electron';
 import * as fs from 'fs';
 import * as path from 'path';
 import pinyin from 'pinyin';
 import { EK } from './eventKeys';
+
+const playIcon = nativeImage.createFromPath(
+  path.resolve(__dirname, require('./components/Player/assets/play.png'))
+);
+const pauseIcon = nativeImage.createFromPath(
+  path.resolve(__dirname, require('./components/Player/assets/pause.png'))
+);
+const skipPrevIcon = nativeImage.createFromPath(
+  path.resolve(
+    __dirname,
+    require('./components/Player/assets/skip_previous.png')
+  )
+);
+const skipNextIcon = nativeImage.createFromPath(
+  path.resolve(__dirname, require('./components/Player/assets/skip_next.png'))
+);
 
 export const hooks = (
   mainWindow: Electron.BrowserWindow,
@@ -104,6 +129,69 @@ export const hooks = (
   });
 
   ipcMain.on(
+    EK.changeMenu,
+    (
+      event,
+      args: {
+        controls: MenusControls;
+        isPlaying: boolean;
+        coverRect?: Electron.Rectangle;
+      }
+    ) => {
+      const { controls = [], isPlaying = false } = args;
+      const controlList = [
+        'togglePlay',
+        'volumeUp',
+        'volumeDown',
+        'nextTrack',
+        'prevTrack',
+      ] as const;
+      controlList.forEach((key) => {
+        const appMenu = Menu.getApplicationMenu();
+        if (!appMenu) return;
+        [key, `_${key}`].forEach((item) => {
+          const menuItem = appMenu.getMenuItemById(item);
+          if (!menuItem) return;
+          menuItem.enabled = controls.includes(key);
+        });
+      });
+
+      mainWindow.setThumbarButtons([
+        {
+          icon: skipPrevIcon,
+          click: () => {
+            mainWindow.webContents.send(EK.prevTrack);
+          },
+          tooltip: '上一首',
+          flags: controls.includes('prevTrack') ? undefined : ['disabled'],
+        },
+        {
+          icon: isPlaying ? pauseIcon : playIcon,
+          click: () => {
+            mainWindow.webContents.send(EK.togglePlay);
+          },
+          tooltip: isPlaying ? '暂停' : '播放',
+          flags: controls.includes('togglePlay') ? undefined : ['disabled'],
+        },
+        {
+          icon: skipNextIcon,
+          click: () => {
+            mainWindow.webContents.send(EK.nextTrack);
+          },
+          tooltip: '下一首',
+          flags: controls.includes('nextTrack') ? undefined : ['disabled'],
+        },
+      ]);
+    }
+  );
+
+  ipcMain.on(EK.showContextMenu, () => {
+    Menu.getApplicationMenu()?.popup({
+      window: mainWindow,
+    });
+  });
+
+  ipcMain.on(
     EK.view,
     async (
       event,
@@ -112,7 +200,6 @@ export const hooks = (
         title: string;
       }
     ) => {
-      // eslint-disable-next-line @typescript-eslint/no-var-requires
       const { screen } = require('electron');
       const viewWindow = new BrowserWindow({
         title: args.title,
@@ -129,7 +216,6 @@ export const hooks = (
         viewWindow.setTitle(args.title);
       });
 
-      // eslint-disable-next-line @typescript-eslint/no-var-requires
       viewWindow.webContents.insertCSS(require('./view/insert.css'));
       viewWindow.webContents.session.webRequest.onBeforeRequest(
         {

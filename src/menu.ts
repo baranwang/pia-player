@@ -9,6 +9,10 @@ export const createMenu = (
     togglePlay?: () => void;
     volumeUp?: () => void;
     volumeDown?: () => void;
+    seekForward?: () => void;
+    seekBackward?: () => void;
+    nextTrack?: () => void;
+    prevTrack?: () => void;
   } = {}
 ): Menus => [
   ...((process.platform === 'darwin'
@@ -33,14 +37,76 @@ export const createMenu = (
     label: '控制',
     submenu: [
       {
+        id: 'togglePlay',
         label: '播放/暂停',
         accelerator: 'Space',
         click: () => {
           options.togglePlay?.();
         },
       },
+      {
+        id: '_togglePlay',
+        label: '播放/暂停（媒体键）',
+        accelerator: 'MediaPlayPause',
+        visible: false,
+        click: () => {
+          options.togglePlay?.();
+        },
+      },
       { type: 'separator' },
       {
+        id: 'seekForward',
+        label: '快进',
+        accelerator: 'right',
+        click: () => {
+          options.seekForward?.();
+        },
+      },
+      {
+        id: 'seekBackward',
+        label: '快退',
+        accelerator: 'left',
+        click: () => {
+          options.seekBackward?.();
+        },
+      },
+      {
+        id: 'prevTrack',
+        label: '上一首',
+        accelerator: 'CmdOrCtrl+left',
+        click: () => {
+          options.prevTrack?.();
+        },
+      },
+      {
+        id: 'nextTrack',
+        label: '下一首',
+        accelerator: 'CmdOrCtrl+right',
+        click: () => {
+          options.nextTrack?.();
+        },
+      },
+      {
+        id: '_prevTrack',
+        label: '上一首（媒体键）',
+        visible: false,
+        accelerator: 'MediaPreviousTrack',
+        click: () => {
+          options.prevTrack?.();
+        },
+      },
+      {
+        id: '_nextTrack',
+        label: '下一首（媒体键）',
+        visible: false,
+        accelerator: 'MediaNextTrack',
+        click: () => {
+          options.nextTrack?.();
+        },
+      },
+      { type: 'separator' },
+      {
+        id: 'volumeUp',
         label: '音量+',
         accelerator: 'up',
         click: () => {
@@ -48,6 +114,7 @@ export const createMenu = (
         },
       },
       {
+        id: 'volumeDown',
         label: '音量-',
         accelerator: 'down',
         click: () => {

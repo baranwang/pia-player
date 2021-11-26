@@ -1,4 +1,6 @@
 type Menus = Array<Electron.MenuItemConstructorOptions | Electron.MenuItem>;
+
+type MenusControls = ('togglePlay' | 'nextTrack' | 'prevTrack' | 'volumeUp' | 'volumeDown')[]
 interface BGM {
   id: number;
   name: string;
