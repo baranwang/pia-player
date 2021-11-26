@@ -18,6 +18,7 @@ import { EK } from './eventKeys';
 
 declare const MAIN_WINDOW_WEBPACK_ENTRY: string;
 declare const MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: string;
+declare const VIEW_WINDOW_PRELOAD_WEBPACK_ENTRY: string;
 
 let mainWindow: Electron.BrowserWindow;
 
@@ -86,7 +87,7 @@ app.whenReady().then(() => {
     globalShortcut.register(key, accelerator[key]);
   });
 
-  hooks(mainWindow);
+  hooks(mainWindow, VIEW_WINDOW_PRELOAD_WEBPACK_ENTRY);
 
   const updater = new Updater();
   setInterval(() => {
@@ -110,6 +111,10 @@ app.whenReady().then(() => {
 });
 
 app.commandLine.appendSwitch('enable-features', 'SharedArrayBuffer');
+
+app.on('new-window-for-tab', () => {
+  mainWindow.focus();
+});
 
 // app.setAsDefaultProtocolClient('pia-player');
 

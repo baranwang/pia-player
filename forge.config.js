@@ -37,6 +37,13 @@ module.exports = {
                 js: './src/preload.ts',
               },
             },
+            {
+              name: 'view_window',
+              js: './src/view/empty.ts',
+              preload: {
+                js: './src/view/index.ts',
+              },
+            },
           ],
         },
       },

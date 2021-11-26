@@ -12,4 +12,6 @@ interface Window {
   ipcRenderer: Electron.IpcRenderer;
   log: typeof import('electron-log');
   platform: NodeJS.Platform;
+
+  insertCSS: string;
 }

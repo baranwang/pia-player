@@ -1,21 +1,23 @@
-import { app, BrowserWindow, ipcMain, ipcRenderer, net, protocol, session } from 'electron';
-import log from 'electron-log';
+import { app, BrowserWindow, ipcMain, protocol, session } from 'electron';
 import * as fs from 'fs';
 import * as path from 'path';
-import { URL } from 'url';
+import pinyin from 'pinyin';
 import { EK } from './eventKeys';
 
-export const hooks = (mainWindow: Electron.BrowserWindow) => {
+export const hooks = (
+  mainWindow: Electron.BrowserWindow,
+  VIEW_WINDOW_PRELOAD_WEBPACK_ENTRY: string
+) => {
   protocol.registerStreamProtocol('stream', (request, callback) => {
     const url = request.url.replace(new RegExp('^stream://'), '');
-    const filepath = decodeURIComponent(url)
+    const filepath = decodeURIComponent(url);
     callback({
       data: fs.createReadStream(filepath),
       headers: {
         'Content-Length': `${fs.statSync(filepath).size}`,
-      }
-    })
-  })
+      },
+    });
+  });
 
   session.defaultSession.webRequest.onHeadersReceived((details, callback) => {
     callback({
@@ -113,15 +115,12 @@ export const hooks = (mainWindow: Electron.BrowserWindow) => {
       // eslint-disable-next-line @typescript-eslint/no-var-requires
       const { screen } = require('electron');
       const viewWindow = new BrowserWindow({
-        parent: mainWindow,
         title: args.title,
         width: 960,
         height: screen.getPrimaryDisplay().workAreaSize.height * 0.75,
-        minimizable: false,
-        maximizable: false,
+        tabbingIdentifier: 'view',
         webPreferences: {
-          nodeIntegration: true,
-          webSecurity: false,
+          preload: VIEW_WINDOW_PRELOAD_WEBPACK_ENTRY,
         },
       });
       viewWindow.removeMenu();
@@ -129,31 +128,9 @@ export const hooks = (mainWindow: Electron.BrowserWindow) => {
       viewWindow.webContents.on('did-finish-load', () => {
         viewWindow.setTitle(args.title);
       });
-      viewWindow.webContents.insertCSS(
-        `.player-bar,
-        .nav,
-        .footer,
-        .article-header .middle,
-        .article-header .real-love-rank,
-        #similar-work,
-        #comment-list,
-        #authorInfo,
-        .control-field .fav-btn,
-        .control-field .clipboard-btn {
-          display: none !important;
-        }          
-        .article-detail-page {
-          margin-left: auto;
-          margin-right: auto;
-        }    
-        .author-name {
-          pointer-events: none;
-        }
-        #content {
-          user-select: text;
-        }
-        `
-      );
+
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
+      viewWindow.webContents.insertCSS(require('./view/insert.css'));
       viewWindow.webContents.session.webRequest.onBeforeRequest(
         {
           urls: ['https://aipiaxi.com/advance/search*'],
@@ -166,4 +143,11 @@ export const hooks = (mainWindow: Electron.BrowserWindow) => {
       );
     }
   );
+
+  ipcMain.handle(EK.pinyin, (event, args) => {
+    return pinyin(args, {
+      heteronym: true,
+      segment: true,
+    });
+  });
 };
