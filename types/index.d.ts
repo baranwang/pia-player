@@ -1,3 +1,4 @@
+type Menus = Array<Electron.MenuItemConstructorOptions | Electron.MenuItem>;
 interface BGM {
   id: number;
   name: string;

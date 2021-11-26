@@ -1,0 +1,23 @@
+/* stylelint-disable */
+.player-bar,
+.nav,
+.footer,
+.article-header .middle,
+.article-header .real-love-rank,
+#similar-work,
+#comment-list,
+#authorInfo,
+.control-field .fav-btn,
+.control-field .clipboard-btn {
+  display: none !important;
+}
+.article-detail-page {
+  margin-left: auto;
+  margin-right: auto;
+}
+.author-name {
+  pointer-events: none;
+}
+#content {
+  user-select: text;
+}

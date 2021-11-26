@@ -29,7 +29,13 @@ module.exports = [
   },
   {
     test: /\.css$/,
+    exclude: /insert\.css/,
     use: ['style-loader', 'css-loader'],
+  },
+  {
+    test: /\.css$/,
+    include: /insert\.css/,
+    use: ['to-string-loader', 'css-loader'],
   },
   {
     test: /\.less$/,
