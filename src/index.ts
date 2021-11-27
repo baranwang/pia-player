@@ -33,6 +33,18 @@ const menu = Menu.buildFromTemplate(
     volumeDown: () => {
       mainWindow.webContents.send(EK.volumeDown);
     },
+    nextTrack: () => {
+      mainWindow.webContents.send(EK.nextTrack);
+    },
+    prevTrack: () => {
+      mainWindow.webContents.send(EK.prevTrack);
+    },
+    seekForward: () => {
+      mainWindow.webContents.send(EK.seekForward);
+    },
+    seekBackward: () => {
+      mainWindow.webContents.send(EK.seekBackward);
+    },
   })
 );
 Menu.setApplicationMenu(menu);
