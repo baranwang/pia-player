@@ -88,4 +88,8 @@ typings/
 # Electron-Forge
 out/
 
+#lockfile
+yarn.lock
+package-lock.json
+
 *.less.d.ts
