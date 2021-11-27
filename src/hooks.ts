@@ -10,8 +10,10 @@ import {
 } from 'electron';
 import * as fs from 'fs';
 import * as path from 'path';
-import pinyin from 'pinyin';
+import { Pinyin } from '@baranwang/pinyin';
 import { EK } from './eventKeys';
+
+const pinyin = new Pinyin();
 
 const playIcon = nativeImage.createFromPath(
   path.resolve(__dirname, require('./components/Player/assets/play.png'))
@@ -231,9 +233,6 @@ export const hooks = (
   );
 
   ipcMain.handle(EK.pinyin, (event, args) => {
-    return pinyin(args, {
-      heteronym: true,
-      segment: true,
-    });
+    return pinyin.get(args);
   });
 };

@@ -16,6 +16,16 @@ module.exports = [
         ),
         to: path.resolve(__dirname, '.webpack', 'renderer'),
       },
+      {
+        from: path.resolve(
+          __dirname,
+          'node_modules',
+          '@baranwang',
+          'pinyin',
+          'bin'
+        ),
+        to: path.resolve(__dirname, '.webpack', 'bin'),
+      },
     ],
   }),
 ];

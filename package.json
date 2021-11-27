@@ -67,6 +67,7 @@
     "typescript": "^4.5.2"
   },
   "dependencies": {
+    "@baranwang/pinyin": "^1.1.0",
     "@ffmpeg/core": "^0.10.0",
     "@ffmpeg/ffmpeg": "^0.10.1",
     "ahooks": "^2.10.12",
@@ -81,7 +82,6 @@
     "mobx-react": "^7.2.1",
     "p-queue": "^7.1.0",
     "path": "^0.12.7",
-    "pinyin": "^2.10.2",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-fast-marquee": "^1.2.1",
