@@ -2,8 +2,9 @@
 
 # Pia Player
 
-[![](https://img.shields.io/github/release/baranwang/pia-player.svg?logo=github&style=flat-square)](https://github.com/baranwang/pia-player/releases/latest)
-[![](https://img.shields.io/github/license/baranwang/pia-player?style=flat-square)](https://github.com/baranwang/pia-player/blob/master/LICENSE)
+[![](https://img.shields.io/github/release/baranwang/pia-player.svg?logo=github)](https://github.com/baranwang/pia-player/releases/latest)
+[![](https://img.shields.io/github/license/baranwang/pia-player)](https://github.com/baranwang/pia-player/blob/master/LICENSE)
+[![Build And Release](https://github.com/baranwang/pia-player/actions/workflows/release.yml/badge.svg)](https://github.com/baranwang/pia-player/actions/workflows/release.yml)
 
 [下载安装](https://github.com/baranwang/pia-player/releases/latest)
 
