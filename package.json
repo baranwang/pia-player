@@ -36,7 +36,6 @@
     "@electron-forge/publisher-github": "^6.0.0-beta.61",
     "@imxeno/electron-forge-maker-nsis": "^6.0.1",
     "@octokit/webhooks-types": "^4.15.0",
-    "@types/pinyin": "^2.10.0",
     "@types/react": "^17.0.34",
     "@types/react-dom": "^17.0.11",
     "@types/semver": "^7.3.9",
