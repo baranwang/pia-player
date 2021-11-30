@@ -38,7 +38,6 @@
     "@octokit/webhooks-types": "^4.15.0",
     "@types/react": "^17.0.34",
     "@types/react-dom": "^17.0.11",
-    "@types/semver": "^7.3.9",
     "@typescript-eslint/eslint-plugin": "^5.4.0",
     "@typescript-eslint/parser": "^5.4.0",
     "@vercel/webpack-asset-relocator-loader": "1.7.0",
@@ -71,7 +70,6 @@
     "@ffmpeg/ffmpeg": "^0.10.1",
     "ahooks": "^2.10.12",
     "antd": "^4.17.2",
-    "axios": "^0.24.0",
     "classnames": "^2.3.1",
     "dexie": "^3.2.0",
     "electron-is-dev": "^2.0.0",
@@ -79,12 +77,12 @@
     "fs": "^0.0.1-security",
     "mobx": "^6.3.7",
     "mobx-react": "^7.2.1",
+    "node-fetch": "^3.1.0",
     "p-queue": "^7.1.0",
     "path": "^0.12.7",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-fast-marquee": "^1.2.1",
-    "semver": "^7.3.5",
     "url": "^0.11.0"
   }
 }

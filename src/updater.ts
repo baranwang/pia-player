@@ -1,17 +1,15 @@
-import axios from 'axios';
 import { app, shell } from 'electron';
+import fetch from 'node-fetch';
 import * as fs from 'fs';
 import * as path from 'path';
-import semver from 'semver';
-import type { Release } from '@octokit/webhooks-types';
 
-const updateURL = `https://api.github.com/repos/baranwang/pia-player/releases/latest`;
+const checkURL = 'https://pia-player.baran.wang/api/latest/check';
+const downloadURL = `https://pia-player.baran.wang/api/latest/${process.platform}`;
 interface UpdateInfo {
   name: string;
   notes: string;
   url: string;
 }
-
 export class Updater {
   constructor() {
     this.checkForUpdatesAndDownload();
@@ -30,47 +28,29 @@ export class Updater {
     this.onUpdateFilePathChange(updateFilePath);
   }
 
-  public onDownloadProgress: ((progressEvent: any) => void) | undefined;
-
   public async checkForUpdates() {
-    const { tag_name, assets, body } = (await axios.get<Release>(updateURL))
-      .data;
-    const latestVersion = semver.coerce(tag_name)!;
-    const currentVersion = semver.coerce(app.getVersion())!;
-    if (semver.gt(latestVersion, currentVersion)) {
-      let extname: string;
-      if (process.platform === 'win32') {
-        extname = '.exe';
-      }
-      if (process.platform === 'darwin') {
-        extname = '.dmg';
-      }
-      const fileInfo = assets.find((asset) => asset.name.endsWith(extname));
+    const { status, json } = await fetch(checkURL)
+    if (status === 200) {
+      const { name, notes } = await json() as { name: string, notes: string };
       this.updateData = {
-        name: latestVersion.raw,
-        notes: body,
-        url: fileInfo!.browser_download_url,
-      };
+        name,
+        notes,
+        url: downloadURL
+      }
     }
   }
 
   public async downloadUpdate() {
     if (!this.updateData) return;
     const { url } = this.updateData;
-    axios
-      .get(url, {
-        responseType: 'arraybuffer',
-        onDownloadProgress: this.onDownloadProgress,
+    const filePath = `${app.getPath('downloads')}/${path.basename(url)}`;
+    const file = fs.createWriteStream(filePath);
+    fetch(url).then(res => {
+      res.body?.pipe(file);
+      res.body?.on('end', () => {
+        this.updateFilePath = filePath;
       })
-      .then((res) => {
-        if (res.status === 200) {
-          const filePath = `${app.getPath('downloads')}/${path.basename(url)}`;
-          const file = fs.createWriteStream(filePath);
-          file.write(res.data);
-          file.close();
-          this.updateFilePath = filePath;
-        }
-      });
+    })
   }
 
   public async checkForUpdatesAndDownload() {
