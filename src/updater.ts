@@ -3,7 +3,7 @@ import fetch from 'node-fetch';
 import * as fs from 'fs';
 import * as path from 'path';
 
-const checkURL = 'https://pia-player.baran.wang/api/latest/check';
+const checkURL = `https://pia-player.baran.wang/api/latest/check?version=${app.getVersion()}`;
 const downloadURL = `https://pia-player.baran.wang/api/latest/${process.platform}`;
 interface UpdateInfo {
   name: string;
