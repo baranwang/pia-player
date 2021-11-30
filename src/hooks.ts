@@ -2,6 +2,7 @@
 import {
   app,
   BrowserWindow,
+  dialog,
   ipcMain,
   Menu,
   nativeImage,
@@ -214,6 +215,7 @@ export const hooks = (
       });
       viewWindow.removeMenu();
       viewWindow.loadURL(`https://aipiaxi.com/Index/post/id/${args.id}`);
+      // viewWindow.loadURL(`https://m.aipiaxi.com/mp/${args.id}`);
       viewWindow.webContents.on('did-finish-load', () => {
         viewWindow.setTitle(args.title);
       });
@@ -227,6 +229,19 @@ export const hooks = (
           mainWindow.webContents.send(EK.search, details.url);
           callback({ cancel: true });
           viewWindow.destroy();
+        }
+      );
+      viewWindow.webContents.session.webRequest.onBeforeRequest(
+        {
+          urls: ['https://aipiaxi.com/404'],
+        },
+        (details, callback) => {
+          callback({ cancel: true });
+          viewWindow.destroy();
+          dialog.showMessageBox({
+            message: '该剧本不存在或本号已更改，请重新搜索',
+            buttons: ['确定'],
+          })
         }
       );
     }

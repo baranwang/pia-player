@@ -3,13 +3,7 @@ import { ipcRenderer } from 'electron';
 
 document.addEventListener('DOMContentLoaded', () => {
   const popover = document.createElement('div');
-  popover.style.position = 'fixed';
-  popover.style.backgroundColor = '#fff';
-  popover.style.maxWidth = '320px';
-  popover.style.padding = '8px';
-  popover.style.borderRadius = '4px';
-  popover.style.boxShadow = '0px 0px 4px rgba(0, 0, 0, 0.25)';
-  popover.style.zIndex = '9999';
+  popover.classList.add('pia-player-popover');
 
   window.addEventListener('mouseup', async () => {
     const selection = getSelection();

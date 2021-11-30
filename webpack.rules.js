@@ -35,7 +35,22 @@ module.exports = [
   {
     test: /\.css$/,
     include: /insert\.css/,
-    use: ['to-string-loader', 'css-loader'],
+    use: [
+      'to-string-loader',
+      'css-loader',
+      {
+        loader: 'postcss-loader',
+        options: {
+          postcssOptions: {
+            plugins: [
+              require('autoprefixer')({
+                overrideBrowserslist: ['chrome 96'],
+              }),
+            ],
+          },
+        },
+      },
+    ],
   },
   {
     test: /\.less$/,

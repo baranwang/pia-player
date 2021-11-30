@@ -1,7 +1,7 @@
 lockfileVersion: 5.3
 
 specifiers:
-  '@baranwang/pinyin': ^1.2.2
+  '@baranwang/pinyin': ^1.2.3
   '@electron-forge/cli': ^6.0.0-beta.61
   '@electron-forge/maker-dmg': ^6.0.0-beta.61
   '@electron-forge/plugin-webpack': 6.0.0-beta.61
@@ -57,7 +57,7 @@ specifiers:
   url: ^0.11.0
 
 dependencies:
-  '@baranwang/pinyin': 1.2.2
+  '@baranwang/pinyin': 1.2.3
   '@ffmpeg/core': 0.10.0
   '@ffmpeg/ffmpeg': 0.10.1
   ahooks: 2.10.12_react@17.0.2
@@ -197,8 +197,8 @@ packages:
       regenerator-runtime: 0.13.9
     dev: false
 
-  /@baranwang/pinyin/1.2.2:
-    resolution: {integrity: sha512-/92M56PCe3GMJNs80s5/z2ofevo1vSLcgw89jkRZt8vL7bt3DeIaIm5JEvPYph9OyKNFBQNmn1RLk9MexJU1Bg==}
+  /@baranwang/pinyin/1.2.3:
+    resolution: {integrity: sha512-RI7y5mdgy4WUo0t4xXaG6tIMLgFnu6eDnWFBAE3Jhkpou89coB5G+4G6MSYtTTvRRM69Udc3pjfJ5XSlujS4Ag==}
     dependencies:
       novel-segment: 2.7.78
     transitivePeerDependencies:
