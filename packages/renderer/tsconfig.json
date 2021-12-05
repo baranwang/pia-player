@@ -1,0 +1,13 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "/@/*": ["src/*"],
+      "/@eventKeys": ["../eventKeys.ts"]
+    },
+    "jsx": "react",
+    "lib": ["ESNext", "DOM", "DOM.Iterable"]
+  },
+  "include": ["src/*", "../../types/**/*.d.ts"]
+}

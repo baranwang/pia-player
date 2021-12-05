@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self' 'unsafe-inline' 'unsafe-eval' http: https: ws: data: blob: stream:"
+    />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <script
+      async
+      src="https://www.googletagmanager.com/gtag/js?id=G-Q98WVJ6FL0"
+    ></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag('js', new Date());
+
+      gtag('config', 'G-Q98WVJ6FL0');
+    </script>
+  </head>
+
+  <body>
+    <div id="root"></div>
+    <script src="./src/app.tsx" type="module"></script>
+  </body>
+</html>

@@ -1,0 +1,77 @@
+{
+  "name": "pia-player",
+  "version": "0.0.0",
+  "productName": "PIA Player",
+  "description": "Pia戏播放器",
+  "main": "packages/main/dist/index.cjs",
+  "scripts": {
+    "build": "node scripts/build.js",
+    "watch": "node scripts/watch.js",
+    "update-electron-vendors": "node scripts/update-electron-vendors.js",
+    "postinstall": "npm run update-electron-vendors"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/baranwang/pia-player.git"
+  },
+  "keywords": [
+    "Pia",
+    "Player",
+    "Pia戏播放器",
+    "戏鲸",
+    "爱pia戏",
+    "戏精",
+    "走本",
+    "即兴配音"
+  ],
+  "author": {
+    "name": "Baran",
+    "email": "me@baran.wang"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/baranwang/pia-player/issues"
+  },
+  "browserslist": [
+    "Chrome 96"
+  ],
+  "homepage": "https://github.com/baranwang/pia-player#readme",
+  "devDependencies": {
+    "@guanghechen/postcss-modules-dts": "^1.8.5",
+    "@types/react": "^17.0.37",
+    "@types/react-dom": "^17.0.11",
+    "@typescript-eslint/eslint-plugin": "^5.5.0",
+    "@typescript-eslint/parser": "^5.5.0",
+    "@vitejs/plugin-react": "^1.1.0",
+    "autoprefixer": "^10.4.0",
+    "electron": "^16.0.4",
+    "electron-devtools-installer": "^3.2.0",
+    "eslint": "^8.4.0",
+    "eslint-plugin-import": "^2.25.3",
+    "less": "^4.1.2",
+    "lodash-es": "^4.17.21",
+    "stylelint": "^14.1.0",
+    "stylelint-config-standard": "^24.0.0",
+    "stylelint-order": "^5.0.0",
+    "typescript": "^4.5.2",
+    "vite": "^2.6.14",
+    "vite-plugin-dts": "^0.9.6"
+  },
+  "dependencies": {
+    "@baranwang/pinyin": "^1.2.3",
+    "@ffmpeg/core": "^0.10.0",
+    "@ffmpeg/ffmpeg": "^0.10.1",
+    "ahooks": "^2.10.14",
+    "antd": "^4.17.2",
+    "classnames": "^2.3.1",
+    "dexie": "^3.2.0",
+    "electron-log": "^4.4.1",
+    "mobx": "^6.3.8",
+    "mobx-react": "^7.2.1",
+    "node-fetch": "^3.1.0",
+    "p-queue": "^7.1.0",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "react-fast-marquee": "^1.2.1"
+  }
+}
