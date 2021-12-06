@@ -1,4 +1,4 @@
-const { productName } = require('./package.json');
+const { productName, repository } = require('./package.json');
 const path = require('path');
 const fs = require('fs');
 const lessToJs = require('less-vars-to-js');
@@ -9,6 +9,8 @@ const lessVars = lessToJs(
     stripPrefix: true,
   }
 );
+
+const [_, owner, repo] = repository.url.match(/github.com\/(.*)\/(.*).git/);
 
 /**
  * @type {import('electron-builder').Configuration}
@@ -55,6 +57,11 @@ const config = {
       width: 640,
       height: 480,
     },
+  },
+  publish: {
+    provider: 'github',
+    owner,
+    repo,
   },
 };
 
