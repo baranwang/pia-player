@@ -1,0 +1,41 @@
+/* stylelint-disable */
+.player-bar,
+.nav,
+.footer,
+.article-header .middle,
+.article-header .real-love-rank,
+#similar-work,
+#comment-list,
+#authorInfo,
+.control-field .fav-btn,
+.control-field .clipboard-btn {
+  display: none !important;
+}
+.article-detail-page {
+  margin-right: auto;
+  margin-left: auto;
+}
+.author-name {
+  pointer-events: none;
+}
+#content,
+#article-content {
+  user-select: text;
+}
+
+.pia-player-popover {
+  position: fixed;
+  z-index: 9999;
+  max-width: 320px;
+  padding: 12px;
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 0 4px rgb(0 0 0 / 25%);
+}
+
+@supports (backdrop-filter: none) {
+  .pia-player-popover {
+    background-color: rgb(255 255 255 / 50%);
+    backdrop-filter: blur(20px);
+  }
+}

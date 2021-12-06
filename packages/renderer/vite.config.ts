@@ -7,6 +7,7 @@ import { join } from 'path';
 import { builtinModules } from 'module';
 
 const PACKAGE_ROOT = __dirname;
+const isDevelopment = process.env.NODE_ENV === 'development';
 
 export default defineConfig({
   mode: process.env.MODE,
@@ -20,17 +21,17 @@ export default defineConfig({
     ],
   },
   plugins: [react()],
+  base: '',
   server: {
     fs: {
       strict: true,
     },
   },
   build: {
-    sourcemap: true,
+    sourcemap: isDevelopment,
     target: `chrome${chrome}`,
     outDir: 'dist',
     assetsDir: '.',
-
     rollupOptions: {
       external: [...builtinModules],
     },

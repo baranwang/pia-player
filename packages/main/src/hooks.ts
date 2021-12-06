@@ -14,17 +14,19 @@ import * as path from 'path';
 import { Pinyin } from '@baranwang/pinyin';
 import { EK } from '/@eventKeys';
 
+import viewInsertCSS from '../../preload/src/view.css'
+
 import playIconBase64 from '/@/assets/play.png?inline';
 import pauseIconBase64 from '/@/assets/pause.png?inline';
 import skipPrevIconBase64 from '/@/assets/skip_previous.png?inline';
 import skipNextIconBase64 from '/@/assets/skip_next.png?inline';
 
-// const pinyin = new Pinyin();
-
 const playIcon = nativeImage.createFromDataURL(playIconBase64);
 const pauseIcon = nativeImage.createFromDataURL(pauseIconBase64);
 const skipPrevIcon = nativeImage.createFromDataURL(skipPrevIconBase64);
 const skipNextIcon = nativeImage.createFromDataURL(skipNextIconBase64);
+
+const pinyin = new Pinyin();
 
 export const hooks = (
   mainWindow: Electron.BrowserWindow) => {
@@ -185,7 +187,7 @@ export const hooks = (
         title: string;
       }
     ) => {
-      /*
+      const url = `https://aipiaxi.com/Index/post/id/${args.id}`
       const { screen } = require('electron');
       const viewWindow = new BrowserWindow({
         title: args.title,
@@ -193,45 +195,30 @@ export const hooks = (
         height: screen.getPrimaryDisplay().workAreaSize.height * 0.75,
         tabbingIdentifier: 'view',
         webPreferences: {
-          preload: VIEW_WINDOW_PRELOAD_WEBPACK_ENTRY,
+          preload: path.resolve(__dirname, '../../preload/dist/view.cjs'),
         },
       });
       viewWindow.removeMenu();
-      viewWindow.loadURL(`https://aipiaxi.com/Index/post/id/${args.id}`);
+      viewWindow.loadURL(url);
       // viewWindow.loadURL(`https://m.aipiaxi.com/mp/${args.id}`);
       viewWindow.webContents.on('did-finish-load', () => {
         viewWindow.setTitle(args.title);
       });
-
-      viewWindow.webContents.insertCSS(require('./view/insert.css'));
+      viewWindow.webContents.insertCSS(viewInsertCSS);
       viewWindow.webContents.session.webRequest.onBeforeRequest(
         {
           urls: ['https://aipiaxi.com/advance/search*'],
         },
         (details, callback) => {
           mainWindow.webContents.send(EK.search, details.url);
-          callback({ cancel: true });
-          viewWindow.destroy();
+          mainWindow.focus();
+          callback({ redirectURL: url });
         }
       );
-      viewWindow.webContents.session.webRequest.onBeforeRequest(
-        {
-          urls: ['https://aipiaxi.com/404'],
-        },
-        (details, callback) => {
-          callback({ cancel: true });
-          viewWindow.destroy();
-          dialog.showMessageBox({
-            message: '该剧本不存在或本号已更改，请重新搜索',
-            buttons: ['确定'],
-          })
-        }
-      );
-    */
     }
   );
 
-  // ipcMain.handle(EK.pinyin, (event, args) => {
-  //   return pinyin.get(args);
-  // });
+  ipcMain.handle(EK.pinyin, (event, args) => {
+    return pinyin.get(args);
+  });
 };

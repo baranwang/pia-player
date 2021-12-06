@@ -4,6 +4,7 @@ import { join } from 'path';
 import { builtinModules } from 'module';
 
 const PACKAGE_ROOT = __dirname;
+const isDevelopment = process.env.NODE_ENV === 'development';
 
 export default defineConfig({
   mode: process.env.MODE,
@@ -16,7 +17,7 @@ export default defineConfig({
     ]
   },
   build: {
-    sourcemap: 'inline',
+    sourcemap: isDevelopment ? 'inline' : false,
     target: `node${node}`,
     outDir: 'dist',
     assetsDir: '.',
@@ -26,7 +27,7 @@ export default defineConfig({
       formats: ['cjs'],
     },
     rollupOptions: {
-      external: ['electron', 'electron-devtools-installer', ...builtinModules],
+      external: ['electron', 'electron-devtools-installer', '@baranwang/pinyin', ...builtinModules],
       output: {
         entryFileNames: '[name].cjs',
       },

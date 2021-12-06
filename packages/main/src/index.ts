@@ -6,9 +6,7 @@ import {
   globalShortcut,
   protocol,
 } from 'electron';
-import installExtension, {
-  REACT_DEVELOPER_TOOLS,
-} from 'electron-devtools-installer';
+
 import { join } from 'path';
 import { createMenu } from './menu';
 import { EK } from '../../eventKeys'
@@ -16,6 +14,10 @@ import { accelerator } from './accelerator';
 import { hooks } from './hooks';
 
 const isDevelopment = import.meta.env.MODE === 'development';
+
+protocol.registerSchemesAsPrivileged([
+  { scheme: 'stream', privileges: { stream: true } },
+]);
 
 let mainWindow: Electron.BrowserWindow;
 
@@ -89,11 +91,10 @@ app.on('new-window-for-tab', () => {
   mainWindow.focus();
 });
 
-app.whenReady().then(() => {
+app.whenReady().then(async () => {
   if (isDevelopment) {
-    installExtension(REACT_DEVELOPER_TOOLS)
-      .then((name) => console.log(`Added Extension:  ${name}`))
-      .catch((err) => console.log('An error occurred: ', err));
+    const { installExtension } = await import.meta.glob('./devtools.ts')['./devtools.ts']();
+    installExtension()
   }
 
   Object.keys(accelerator).forEach((key) => {

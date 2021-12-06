@@ -3,7 +3,7 @@ import { AppDatabase } from './db';
 import { createFFmpeg } from '@ffmpeg/ffmpeg';
 import PQueue from 'p-queue';
 import { EK } from '/@eventKeys';
-import ffmpegCore from '@ffmpeg/core';
+import ffmpegCore from '@ffmpeg/core/dist/ffmpeg-core.js?url';
 
 const db = new AppDatabase();
 
