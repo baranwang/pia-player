@@ -35,7 +35,7 @@ export const getDrama = async (id: number) => {
 };
 
 export const searchDrama = async ({ page = 1, pageSize = 20, q = '' } = {}) => {
-  const url = new URL(`${API_PREFIX}discover/article/search`);
+  const url = new URL('discover/article/search', API_PREFIX);
   url.search = new URLSearchParams({
     page: `${page}`,
     page_size: `${pageSize}`,
@@ -77,12 +77,10 @@ export const downloadBGM = async (
   let transcode = false;
 
   const response = await fetch(bgm.url).then(({ headers, body }) => {
-    const contentLength =
-      headers.get('Content-Length') || headers.get('content-length') || '';
+    const contentLength = headers.get('Content-Length') || '';
     const total = parseInt(contentLength, 10);
 
-    const contentType =
-      headers.get('Content-Type') || headers.get('content-type');
+    const contentType = headers.get('Content-Type');
     transcode = new Audio().canPlayType(contentType || '') !== 'probably';
 
     const reader = body!.getReader();

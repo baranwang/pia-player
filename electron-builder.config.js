@@ -1,16 +1,4 @@
-const { productName, repository } = require('./package.json');
-const path = require('path');
-const fs = require('fs');
-const lessToJs = require('less-vars-to-js');
-
-const lessVars = lessToJs(
-  fs.readFileSync(path.resolve('./packages/renderer/src/vars.less'), 'utf8'),
-  {
-    stripPrefix: true,
-  }
-);
-
-const [_, owner, repo] = repository.url.match(/github.com\/(.*)\/(.*).git/);
+const { productName } = require('./package.json');
 
 /**
  * @type {import('electron-builder').Configuration}
@@ -22,22 +10,24 @@ const config = {
   asar: true,
   files: ['packages/**/dist/**'],
   win: {
-    target: ['nsis', 'appx'],
+    target: [
+      {
+        target: 'nsis',
+        arch: ['x64', 'ia32', 'arm64'],
+      },
+    ],
   },
   nsis: {
     oneClick: false,
     perMachine: true,
     allowToChangeInstallationDirectory: true,
     uninstallDisplayName: productName,
-    license: 'LICENSE',
-  },
-  appx: {
-    identityName: 'pia-player',
-    backgroundColor: lessVars['primary-color'],
-    languages: 'zh-Hans',
   },
   mac: {
-    target: ['dmg'],
+    target: {
+      target: 'dmg',
+      arch: ['x64'],
+    },
   },
   dmg: {
     background: 'build/dmg-background.png',
@@ -58,11 +48,17 @@ const config = {
       height: 480,
     },
   },
-  publish: {
-    provider: 'github',
-    owner,
-    repo,
-  },
+  publish: [
+    {
+      provider: 'generic',
+      url: 'https://pia-player.baran.wang/api/update',
+      publishAutoUpdate: true,
+    },
+    {
+      provider: 'github',
+      releaseType: 'release',
+    },
+  ],
 };
 
 module.exports = config;

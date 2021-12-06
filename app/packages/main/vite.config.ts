@@ -1,5 +1,5 @@
 import { defineConfig } from 'vite';
-import { node } from '../../electron-vendors.config.json';
+import { node } from '../../../electron-vendors.config.json';
 import { join } from 'path';
 import { builtinModules } from 'module';
 

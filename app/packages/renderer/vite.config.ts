@@ -2,7 +2,7 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { dts } from '@guanghechen/postcss-modules-dts'
 import autoprefixer = require("autoprefixer")
-import { chrome } from '../../electron-vendors.config.json';
+import { chrome } from '../../../electron-vendors.config.json';
 import { join } from 'path';
 import { builtinModules } from 'module';
 

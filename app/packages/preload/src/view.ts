@@ -30,8 +30,8 @@ document.addEventListener('DOMContentLoaded', () => {
         popoverWidth = rect.width;
         popoverHeight = rect.height;
       }
-      popover.style.top = `${y - popoverHeight - 8}px`;
-      popover.style.left = `${x - (popoverWidth - width) / 2}px`;
+      popover.style.top = `${Math.max(y - popoverHeight - 8, 0)}px`;
+      popover.style.left = `${Math.max(x - (popoverWidth - width) / 2, 0)}px`;
     } else {
       popover.remove();
     }

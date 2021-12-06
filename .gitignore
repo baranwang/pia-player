@@ -127,4 +127,6 @@ dist
 .yarn/install-state.gz
 .pnp.*
 
+# app
 *.module.less*.d.ts
+app/package*.json

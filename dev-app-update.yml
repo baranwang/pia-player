@@ -1,0 +1,4 @@
+provider: generic
+url: http://localhost:8000/api/update
+publishAutoUpdate: true
+updaterCacheDirName: pia-player-updater

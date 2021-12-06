@@ -1,4 +1,5 @@
 import { app, shell } from 'electron';
+import { autoUpdater } from 'electron-updater'
 import { accelerator } from './accelerator';
 import { productName } from '../../../package.json';
 
@@ -21,6 +22,7 @@ export const createMenu = (
           label: name,
           submenu: [
             { role: 'about', label: `关于 ${name}` },
+            { label: '检查更新…', click: () => autoUpdater.checkForUpdatesAndNotify() },
             { type: 'separator' },
             // { label: 'Preferences', accelerator: 'CmdOrCtrl+,' },
             // { type: 'separator' },

@@ -6,7 +6,8 @@ import {
   globalShortcut,
   protocol,
 } from 'electron';
-
+import { autoUpdater } from 'electron-updater'
+import log, { ElectronLog } from 'electron-log'
 import { join } from 'path';
 import { createMenu } from './menu';
 import { EK } from '../../eventKeys'
@@ -14,6 +15,10 @@ import { accelerator } from './accelerator';
 import { hooks } from './hooks';
 
 const isDevelopment = import.meta.env.MODE === 'development';
+
+autoUpdater.logger = log;
+(autoUpdater.logger as ElectronLog).transports.file.level = 'info'
+
 
 protocol.registerSchemesAsPrivileged([
   { scheme: 'stream', privileges: { stream: true } },
@@ -96,6 +101,8 @@ app.whenReady().then(async () => {
     const { installExtension } = await import.meta.glob('./devtools.ts')['./devtools.ts']();
     installExtension()
   }
+
+  autoUpdater.checkForUpdatesAndNotify();
 
   Object.keys(accelerator).forEach((key) => {
     globalShortcut.register(key, accelerator[key]);
