@@ -3,6 +3,8 @@ import { autoUpdater } from 'electron-updater'
 import { accelerator } from './accelerator';
 import { productName } from '../../../package.json';
 
+const isDevelopment = import.meta.env.MODE === 'development';
+
 const name = app?.name || productName;
 
 export const createMenu = (
@@ -22,7 +24,7 @@ export const createMenu = (
           label: name,
           submenu: [
             { role: 'about', label: `关于 ${name}` },
-            { label: '检查更新…', click: () => autoUpdater.checkForUpdatesAndNotify() },
+            { label: '检查更新…', click: () => isDevelopment ? autoUpdater.checkForUpdates() : autoUpdater.checkForUpdatesAndNotify() },
             { type: 'separator' },
             // { label: 'Preferences', accelerator: 'CmdOrCtrl+,' },
             // { type: 'separator' },
