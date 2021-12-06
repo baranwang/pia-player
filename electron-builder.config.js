@@ -24,10 +24,16 @@ const config = {
     uninstallDisplayName: productName,
   },
   mac: {
-    target: {
-      target: ['dmg', 'zip'],
-      arch: ['x64'],
-    },
+    target: [
+      {
+        target: 'dmg',
+        arch: ['x64'],
+      },
+      {
+        target: 'zip',
+        arch: ['x64'],
+      },
+    ],
   },
   dmg: {
     background: 'build/dmg-background.png',
