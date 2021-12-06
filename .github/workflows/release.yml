@@ -1,0 +1,30 @@
+name: Build And Release
+
+on:
+  push:
+    tags: ['v*.*.*']
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: macos-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: pnpm/action-setup@v2.0.1
+        with:
+          version: 6.23.6
+
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 16.x
+          cache: pnpm
+
+      - run: pnpm install
+
+      - run: npm run compile
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
