@@ -151,6 +151,9 @@ export const createMenu = (
           },
         },
         { type: 'separator' },
+        ...(process.platform !== 'darwin' ? [
+          { label: '检查更新…', click: () => isDevelopment ? autoUpdater.checkForUpdates() : autoUpdater.checkForUpdatesAndNotify() }
+        ] : []),
       ],
     },
   ];
