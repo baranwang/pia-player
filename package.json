@@ -1,6 +1,6 @@
 {
   "name": "pia-player",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "productName": "PIA Player",
   "description": "Pia戏播放器",
   "main": "app/packages/main/dist/index.cjs",
