@@ -1,6 +1,17 @@
 const { spawn } = require('child_process');
 const path = require('path');
 const fs = require('fs');
+const lessToJs = require('less-vars-to-js');
+
+const palette = lessToJs(
+  fs.readFileSync(
+    path.resolve(__dirname, '../app/packages/renderer/src/vars.less'),
+    'utf8'
+  ),
+  {
+    stripPrefix: true,
+  }
+);
 
 /**
  *
@@ -8,10 +19,21 @@ const fs = require('fs');
  * @param {Map<string, Record<'from'|'version'|'resolved'|'description'|'homepage'|'repository'|'license'|'licenseText', string>>} licenses
  */
 const handlerHtml = (mainLicense, licenses) => {
+  const head = [
+    '<style>',
+    'body, pre { font-family: sans-serif; font-size: 12px; }',
+    'h3 { font-size: 1.5em; }',
+    'h4 { font-size: 1.25em; margin: 1em 0 .5em; }',
+    'pre { white-space: pre-wrap; }',
+    'hr { border: 0; border-bottom: 1px solid #ccc; margin: 2em 0; }',
+    `a { color: ${palette['primary-color']} }`,
+    '</style>',
+  ].join('\n');
+
   const main = [
-    `<h2>PIA Player license</h2>`,
+    `<h3>PIA Player license</h3>`,
     `<pre>${mainLicense}</pre>`,
-    `<h2>Bundled dependencies</h2>`,
+    `<h3>Bundled dependencies</h3>`,
   ].join('\n');
 
   const dependencies = Array.from(licenses)
@@ -19,8 +41,10 @@ const handlerHtml = (mainLicense, licenses) => {
     .map(([_, pkg]) => {
       const item = [];
       item.push(`<h4>${pkg.from}</h4>`);
-      item.push(`<p>License: ${pkg.license}</p>`);
-      item.push(`<p>Repository: ${pkg.repository}</p>`);
+      item.push(`<div>License: ${pkg.license}</div>`);
+      item.push(
+        `<div>Repository: <a href="${pkg.repository}" target="_blank">${pkg.repository}</a></div>`
+      );
       item.push(`<pre>${pkg.licenseText}</pre>`);
       return item.join('\n');
     })
@@ -28,7 +52,7 @@ const handlerHtml = (mainLicense, licenses) => {
 
   fs.writeFileSync(
     path.resolve('build/license.html'),
-    [main, dependencies].join('\n')
+    [head, main, dependencies].join('\n')
   );
 };
 
