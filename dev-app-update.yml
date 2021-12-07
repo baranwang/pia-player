@@ -1,4 +1,4 @@
 provider: generic
-url: http://localhost:8000/api/update
+url: https://pia-player.baran.wang/api/update
 publishAutoUpdate: true
 updaterCacheDirName: pia-player-updater
