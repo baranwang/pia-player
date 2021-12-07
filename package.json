@@ -5,11 +5,12 @@
   "description": "Pia戏播放器",
   "main": "app/packages/main/dist/index.cjs",
   "scripts": {
+    "preinstall": "npx -y only-allow pnpm",
     "build": "node scripts/build.js",
     "watch": "node scripts/watch.js",
-    "prewatch": "npm run make-package-json",
-    "prebuild": "npm run make-package-json",
-    "make-package-json": "node scripts/make-package-json.js",
+    "prewatch": "npm run buildmake",
+    "prebuild": "npm run buildmake",
+    "buildmake": "node scripts/make-package-json.js && node scripts/licenses.js",
     "update-electron-vendors": "node scripts/update-electron-vendors.js",
     "postinstall": "npm run update-electron-vendors",
     "precompile": "cross-env MODE=production npm run build",
@@ -60,8 +61,7 @@
     "stylelint-config-standard": "^24.0.0",
     "stylelint-order": "^5.0.0",
     "typescript": "^4.5.2",
-    "vite": "^2.6.14",
-    "vite-plugin-dts": "^0.9.6"
+    "vite": "^2.6.14"
   },
   "dependencies": {
     "@baranwang/pinyin": "^1.4.0",
