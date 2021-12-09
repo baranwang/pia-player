@@ -1,4 +1,4 @@
-const { productName } = require('./package.json');
+const { productName } = require("./package.json");
 
 /**
  * @type {import('electron-builder').Configuration}
@@ -6,14 +6,14 @@ const { productName } = require('./package.json');
  */
 const config = {
   productName,
-  appId: 'wang.baran.pia-player',
+  appId: "wang.baran.pia-player",
   asar: true,
-  files: ['packages/**/dist/**'],
+  files: ["**/dist/**"],
   win: {
     target: [
       {
-        target: 'nsis',
-        arch: ['x64', 'ia32', 'arm64'],
+        target: "nsis",
+        arch: ["x64", "ia32", "arm64"],
       },
     ],
   },
@@ -26,17 +26,17 @@ const config = {
   mac: {
     target: [
       {
-        target: 'dmg',
-        arch: ['x64'],
+        target: "dmg",
+        arch: ["x64"],
       },
       {
-        target: 'zip',
-        arch: ['x64'],
+        target: "zip",
+        arch: ["x64"],
       },
     ],
   },
   dmg: {
-    background: 'build/dmg-background.png',
+    background: "build/dmg-background.png",
     contents: [
       {
         x: 200,
@@ -45,8 +45,8 @@ const config = {
       {
         x: 440,
         y: 320,
-        type: 'link',
-        path: '/Applications',
+        type: "link",
+        path: "/Applications",
       },
     ],
     window: {
@@ -56,13 +56,13 @@ const config = {
   },
   publish: [
     {
-      provider: 'generic',
-      url: 'https://pia-player.baran.wang/api/update',
+      provider: "generic",
+      url: "https://pia-player.baran.wang/api/update",
       publishAutoUpdate: true,
     },
     {
-      provider: 'github',
-      releaseType: 'release',
+      provider: "github",
+      releaseType: "release",
     },
   ],
 };

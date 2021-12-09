@@ -5,7 +5,7 @@ const lessToJs = require('less-vars-to-js');
 
 const palette = lessToJs(
   fs.readFileSync(
-    path.resolve(__dirname, '../app/packages/renderer/src/vars.less'),
+    path.resolve(__dirname, '../app/renderer/src/vars.less'),
     'utf8'
   ),
   {

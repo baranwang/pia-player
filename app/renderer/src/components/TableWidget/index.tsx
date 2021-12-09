@@ -1,9 +1,9 @@
-import * as React from 'react';
-import { getDrama } from '/@/api';
-import { useRequest } from 'ahooks';
-import { Button, Form, Select, Slider, Tooltip } from 'antd';
+import * as React from "react";
+import { getDrama } from "/@/api";
+import { useRequest } from "ahooks";
+import { Button, Form, Select, Slider, Tooltip } from "antd";
 
-import styles from './table-widget.module.less';
+import styles from "./table-widget.module.less";
 
 export const SelectLenthRange: React.FC<{
   value: [number, number];
@@ -12,7 +12,7 @@ export const SelectLenthRange: React.FC<{
   const [rangeValue, setRangeValue] = React.useState(value);
   return (
     <>
-      <div className={styles['lenth-range']}>
+      <div className={styles["lenth-range"]}>
         <Slider
           range={{ draggableTrack: true }}
           min={0}
@@ -52,12 +52,12 @@ export const SelectRole: React.FC<{
   return (
     <>
       <Form className={styles.role} layout="inline">
-        {['男', '女'].map((item, index) => (
+        {["男", "女"].map((item, index) => (
           <Form.Item key={item} label={item}>
             <Select
               value={role[index]}
               options={Array.from({ length: 6 }, (_, i) => i - 1).map((i) => ({
-                label: i < 0 ? '不限' : `${i} 人`,
+                label: i < 0 ? "不限" : `${i} 人`,
                 value: i,
               }))}
               onChange={(value) => {
@@ -97,7 +97,7 @@ export const PlayDramaButton: React.FC<{
   dramaId: number;
   onSuccess?: (res: Aipiaxi.DramaInfo) => void;
 }> = ({ dramaId, onSuccess }) => {
-  const { run, loading } = useRequest(() => getDrama(dramaId), {
+  const { runAsync, loading } = useRequest(() => getDrama(dramaId), {
     manual: true,
   });
 
@@ -106,7 +106,7 @@ export const PlayDramaButton: React.FC<{
       type="link"
       loading={loading}
       onClick={() => {
-        run().then((res) => {
+        runAsync().then((res) => {
           onSuccess?.(res);
         });
       }}>
@@ -119,7 +119,7 @@ export const Ellipsis: React.FC<{
   children: string;
 }> = ({ children }) => {
   return (
-    <Tooltip placement="topLeft" title={children.replace(/<[^>]+>/g, '')}>
+    <Tooltip placement="topLeft" title={children.replace(/<[^>]+>/g, "")}>
       <span dangerouslySetInnerHTML={{ __html: children }} />
     </Tooltip>
   );

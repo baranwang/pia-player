@@ -1,4 +1,4 @@
-import * as React from 'react';
+import * as React from "react";
 import {
   Button,
   Card,
@@ -9,22 +9,22 @@ import {
   Table,
   TablePaginationConfig,
   Tooltip,
-} from 'antd';
-import { searchDrama, viewDrama } from '/@/api';
-import { AppDatabase } from '/@/db';
-import { useRequest } from 'ahooks';
-import { observer } from 'mobx-react';
-import { useStores } from '/@/store';
-import { Header } from '/@/components/Header';
+} from "antd";
+import { searchDrama, viewDrama } from "/@/api";
+import { AppDatabase } from "/@/db";
+import { usePagination } from "ahooks";
+import { observer } from "mobx-react";
+import { useStores } from "/@/store";
+import { Header } from "/@/components/Header";
 import {
   Ellipsis,
   PlayDramaButton,
   SelectLenthRange,
   SelectRole,
-} from '/@/components/TableWidget';
-import { EK } from '/@eventKeys';
+} from "/@/components/TableWidget";
+import { EK } from "/@eventKeys";
 
-import styles from './index.module.less';
+import styles from "./index.module.less";
 
 const db = new AppDatabase();
 
@@ -32,21 +32,21 @@ const getDramaFromLocal = async (current: number, pageSize: number) => {
   const count = await db.drama.count();
   const list: Array<Aipiaxi.DramaInfoInSearch> = (
     await db.drama
-      .orderBy('id')
+      .orderBy("id")
       .offset((current - 1) * pageSize)
       .limit(pageSize)
       .toArray()
   ).map((item) => ({
     ...item,
-    article_url: '',
+    article_url: "",
     author: item.nickname,
     bgm_count: item.bgm.length,
-    has_ost: '0',
-    index_name: '',
-    recommend_count: '',
-    subscribe_count: '',
-    tags: '',
-    thumbnail: item.photo || '',
+    has_ost: "0",
+    index_name: "",
+    recommend_count: "",
+    subscribe_count: "",
+    tags: "",
+    thumbnail: item.photo || "",
     title: item.name,
     type: `${item.type}`,
     update_timestamp: item.updated_at,
@@ -60,7 +60,7 @@ export const IndexPage = observer(() => {
 
   const [config, setConfig] = React.useState<Aipiaxi.Config>();
 
-  const [keyword, setKeyword] = React.useState('');
+  const [keyword, setKeyword] = React.useState("");
   const [type, setType] = React.useState(0);
   const [tags, setTags] = React.useState<number[]>([]);
   const [historical, setHistorical] = React.useState(0);
@@ -94,7 +94,7 @@ export const IndexPage = observer(() => {
     if (role[1] > -1) {
       query.push(`role_female:eq:${role[1]}`);
     }
-    return query.join(';');
+    return query.join(";");
   }, [keyword, type, historical, tags, lengthRange, role]);
 
   React.useEffect(() => {
@@ -103,9 +103,9 @@ export const IndexPage = observer(() => {
 
       window.ipcRenderer.on(EK.search, (event, arg) => {
         const url = new URL(arg);
-        if (url.pathname === '/advance/search') {
+        if (url.pathname === "/advance/search") {
           const tags = Object.values(config).flat();
-          const tagText = url.searchParams.get('tag');
+          const tagText = url.searchParams.get("tag");
           const tag = tags.find((tag) => tag.text === tagText);
           if (tag) {
             setTags([tag.id]);
@@ -115,17 +115,20 @@ export const IndexPage = observer(() => {
     });
   }, []);
 
-  const { data, pagination, loading } = useRequest(
+  const { data, pagination, loading } = usePagination(
     ({ current = 1, pageSize = 20 }) => {
+      let result: Promise<{
+        count: number;
+        list: Aipiaxi.DramaInfoInSearch[];
+      }>;
       if (searchQuery) {
-        return searchDrama({ page: current, pageSize, q: searchQuery });
+        result = searchDrama({ page: current, pageSize, q: searchQuery });
       } else {
-        return getDramaFromLocal(current, pageSize);
+        result = getDramaFromLocal(current, pageSize);
       }
+      return result.then((res) => ({ ...res, total: res.count }));
     },
     {
-      paginated: true,
-      formatResult: (res) => ({ ...res, total: res.count }),
       refreshDeps: [searchQuery],
       cacheKey: `search-${searchQuery}`,
     }
@@ -139,10 +142,10 @@ export const IndexPage = observer(() => {
           addonBefore={
             config ? (
               <Select
-                className={styles['search-type']}
+                className={styles["search-type"]}
                 options={[
                   {
-                    label: '全部',
+                    label: "全部",
                     value: 0,
                   },
                   ...config.type.map((item) => ({
@@ -161,7 +164,7 @@ export const IndexPage = observer(() => {
         />
       </Header>
       <Layout.Content className={styles.main}>
-        <Card className={styles['search-filter']} bordered={false}>
+        <Card className={styles["search-filter"]} bordered={false}>
           <Form layout="inline">
             <Form.Item label="时代">
               <Select
@@ -169,7 +172,7 @@ export const IndexPage = observer(() => {
                   config
                     ? [
                         {
-                          label: '不限',
+                          label: "不限",
                           value: 0,
                         },
                         ...config.historical.map((item) => ({
@@ -199,18 +202,18 @@ export const IndexPage = observer(() => {
           </Form>
         </Card>
         <Table<Aipiaxi.DramaInfoInSearch>
-          className={styles['search-reslut']}
+          className={styles["search-reslut"]}
           dataSource={data?.list}
           rowKey="id"
           columns={[
             {
-              title: '本号',
-              dataIndex: 'id',
+              title: "本号",
+              dataIndex: "id",
               width: 96,
             },
             {
-              title: '类型',
-              dataIndex: 'type',
+              title: "类型",
+              dataIndex: "type",
               width: 96,
               filterMultiple: false,
               filtered: !!type,
@@ -225,14 +228,14 @@ export const IndexPage = observer(() => {
               },
             },
             {
-              title: '标题',
-              dataIndex: 'title',
+              title: "标题",
+              dataIndex: "title",
               ellipsis: true,
               render: (value) => <Ellipsis>{value}</Ellipsis>,
             },
             {
-              title: '角色',
-              key: 'role',
+              title: "角色",
+              key: "role",
               width: 120,
               filtered: role[0] > -1 || role[1] > -1,
               filterDropdown: ({ confirm }) => (
@@ -248,9 +251,9 @@ export const IndexPage = observer(() => {
                 `${record.role_male}男 . ${record.role_female}女`,
             },
             {
-              title: '字数',
+              title: "字数",
               width: 96,
-              dataIndex: 'word_count',
+              dataIndex: "word_count",
               filtered: lengthRange[0] !== 0 || lengthRange[1] !== 90000,
               filterDropdown: ({ confirm }) => (
                 <SelectLenthRange
@@ -263,9 +266,9 @@ export const IndexPage = observer(() => {
               ),
             },
             {
-              title: '作者',
+              title: "作者",
               width: 120,
-              dataIndex: 'author',
+              dataIndex: "author",
               ellipsis: true,
               render: (value) => {
                 const authorDom = (
@@ -279,8 +282,8 @@ export const IndexPage = observer(() => {
               },
             },
             {
-              title: '操作',
-              key: 'action',
+              title: "操作",
+              key: "action",
               width: 144,
               render: (_, record) => {
                 const acitons: React.ReactNode[] = [
@@ -290,7 +293,7 @@ export const IndexPage = observer(() => {
                     onClick={() => {
                       viewDrama(
                         record.id,
-                        record.title.replace(/<[^>]+>/g, '')
+                        record.title.replace(/<[^>]+>/g, "")
                       );
                     }}>
                     查看

@@ -58,7 +58,9 @@ export const useAudio = ({ onError }: {
   }, [current]);
 
   const [isPlaying, setIsPlaying] = useState(false)
-  const [volume, setVolume] = useLocalStorageState('volume', audio.volume);
+  const [volume, setVolume] = useLocalStorageState('volume', {
+    defaultValue: audio.volume,
+  });
   const [duration, setDuration] = useState(audio.duration);
   const [currentTime, setCurrentTime] = useState(audio.currentTime);
 
@@ -142,6 +144,12 @@ export const useAudio = ({ onError }: {
       audio.removeEventListener('playing', handlerPlayStatus)
     }
   }, []);
+
+  useEffect(() => {
+    audio.volume = volume;
+    console.log(volume);
+    
+  }, [volume])
 
   const [playbackRate, setPlaybackRate] = useState(audio.playbackRate);
   useEffect(() => {

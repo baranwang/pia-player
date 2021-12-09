@@ -1,5 +1,6 @@
 import { contextBridge, ipcRenderer } from 'electron';
 import log from 'electron-log';
+import { EK } from '/@eventKeys';
 
 contextBridge.exposeInMainWorld('platform', process.platform);
 contextBridge.exposeInMainWorld('log', log);
@@ -11,3 +12,11 @@ contextBridge.exposeInMainWorld('ipcRenderer', {
   removeListener: ipcRenderer.removeListener.bind(ipcRenderer),
   invoke: ipcRenderer.invoke.bind(ipcRenderer),
 });
+
+window.addEventListener('contextmenu', (e) => {
+  if (e.target instanceof HTMLInputElement) {
+    // TODO: add context menu for input elements
+  } else {
+    ipcRenderer.send(EK.showContextMenu);
+  }
+})

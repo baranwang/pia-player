@@ -1,15 +1,15 @@
-const pkg = require('../package.json');
-const fs = require('fs');
+const pkg = require("../package.json");
+const fs = require("fs");
 
 /**
  * @type {Array<keyof typeof pkg['dependencies']>}
  */
 const dependencieNames = [
-  '@baranwang/pinyin',
-  '@ffmpeg/core',
-  'electron-log',
-  'electron-updater',
-  'node-fetch',
+  "@baranwang/pinyin",
+  "@ffmpeg/core",
+  "electron-log",
+  "electron-updater",
+  "node-fetch",
 ];
 
 const dependencies = Object.fromEntries(
@@ -24,10 +24,10 @@ const dependencies = Object.fromEntries(
    */
   const json = {
     ...pkg,
-    main: 'packages/main/dist/index.cjs',
+    main: "main/dist/index.cjs",
     scripts: {},
     devDependencies: {},
     dependencies,
   };
-  fs.writeFileSync('./app/package.json', JSON.stringify(json), 'utf-8');
+  fs.writeFileSync("./app/package.json", JSON.stringify(json), "utf-8");
 })();
