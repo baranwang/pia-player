@@ -1,10 +1,9 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
-import { BrowserWindow, Menu, app, ipcMain, nativeImage, protocol, session, shell } from 'electron';
+import { BrowserWindow, Menu, app, ipcMain, nativeImage, protocol, session } from 'electron';
 import * as fs from 'fs';
 import * as path from 'path';
 import { Pinyin } from '@baranwang/pinyin';
 import { EK } from '/@eventKeys';
-import log from 'electron-log';
+import { execSync } from 'child_process';
 
 import viewInsertCSS from '../../preload/src/view.css';
 
@@ -173,16 +172,7 @@ export const hooks = (mainWindow: Electron.BrowserWindow) => {
     fs.existsSync(dir) || fs.mkdirSync(dir);
     const filepath = path.resolve(dir, `${drama.name}.dpl`);
     fs.writeFileSync(filepath, reslut.join('\n'));
-    shell
-      .openExternal(`potplayer://`)
-      .then(() => {
-        shell
-          .openExternal(filepath)
-          .catch(log.error);
-      })
-      .catch(() => {
-        shell.openExternal('https://potplayer.daum.net/?lang=zh_CN');
-      });
+    execSync(`start "" "${filepath}"`);
   });
 
   ipcMain.on(EK.showContextMenu, () => {
@@ -201,6 +191,7 @@ export const hooks = (mainWindow: Electron.BrowserWindow) => {
       },
     ) => {
       const url = `https://aipiaxi.com/Index/post/id/${args.id}`;
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
       const { screen } = require('electron');
       const viewWindow = new BrowserWindow({
         title: args.title,
