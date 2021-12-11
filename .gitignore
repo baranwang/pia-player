@@ -130,4 +130,5 @@ dist
 # app
 *.module.less*.d.ts
 app/package*.json
+app/pnpm-lock.yaml
 build/license*
