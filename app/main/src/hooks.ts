@@ -4,6 +4,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { Pinyin } from '@baranwang/pinyin';
 import { EK } from '/@eventKeys';
+import log from 'electron-log';
 
 import viewInsertCSS from '../../preload/src/view.css';
 
@@ -168,14 +169,16 @@ export const hooks = (mainWindow: Electron.BrowserWindow) => {
       reslut.push(`${index + 1}*file*${bgm.url}`);
       reslut.push(`${index + 1}*title*${bgm.name}`);
     });
-    const dir = path.resolve(app.getPath('userData'), 'Pot Player');
+    const dir = path.resolve(app.getPath('userData'), 'PotPlayer');
     fs.existsSync(dir) || fs.mkdirSync(dir);
     const filepath = path.resolve(dir, `${drama.name}.dpl`);
     fs.writeFileSync(filepath, reslut.join('\n'));
     shell
       .openExternal(`potplayer://`)
       .then(() => {
-        shell.openExternal(filepath);
+        shell
+          .openExternal(filepath)
+          .catch(log.error);
       })
       .catch(() => {
         shell.openExternal('https://potplayer.daum.net/?lang=zh_CN');
