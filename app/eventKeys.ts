@@ -14,4 +14,6 @@ export const EK = {
   pinyin: 'pinyin',
 
   showContextMenu: 'showContextMenu',
+
+  playWithPotPlayer: 'playWithPotPlayer',
 };

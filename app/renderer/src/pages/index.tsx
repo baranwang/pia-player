@@ -2,9 +2,11 @@ import * as React from 'react';
 import {
   Button,
   Card,
+  Dropdown,
   Form,
   Input,
   Layout,
+  Menu,
   Select,
   Table,
   TablePaginationConfig,
@@ -311,14 +313,44 @@ export const IndexPage = observer(() => {
                   </Button>,
                 ];
                 if (record.bgm_count > 0) {
+                  const playerList: Array<{
+                    key: string;
+                    name: string;
+                    fn: (drama: Aipiaxi.DramaInfo) => void;
+                  }> = [
+                    {
+                      key: 'piaplaer',
+                      name: '内置播放器',
+                      fn: (drama) => playlistStore.addDramaToList(drama),
+                    },
+                  ];
+
+                  if (window.platform === 'win32') {
+                    playerList.push({
+                      key: 'potplayer',
+                      name: 'PotPlayer',
+                      fn: (drama) => window.ipcRenderer.send(EK.playWithPotPlayer, drama),
+                    });
+                  }
+
                   acitons.push(
-                    <PlayDramaButton
-                      dramaId={record.id}
+                    <Dropdown
                       key="play"
-                      onSuccess={(res) => {
-                        playlistStore.addDramaToList(res);
-                      }}
-                    />,
+                      trigger={['click']}
+                      overlay={
+                        <Menu>
+                          {playerList.map((item) => (
+                            <Menu.Item key={item.key}>
+                              <PlayDramaButton dramaId={record.id} onSuccess={item.fn}>
+                                {item.name}
+                              </PlayDramaButton>
+                            </Menu.Item>
+                          ))}
+                        </Menu>
+                      }
+                    >
+                      <Button type="link">播放</Button>
+                    </Dropdown>,
                   );
                 }
                 return acitons;

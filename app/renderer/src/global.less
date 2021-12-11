@@ -78,3 +78,21 @@ body {
     background-color: transparent;
   }
 }
+
+.ant-dropdown-menu-title-content {
+  > .ant-btn-link {
+    position: static;
+    height: inherit;
+    padding: 0;
+    line-height: inherit;
+    color: inherit;
+    &::after {
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      content: "";
+    }
+  }
+}

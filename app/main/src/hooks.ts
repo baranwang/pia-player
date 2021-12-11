@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
-import { BrowserWindow, Menu, app, ipcMain, nativeImage, protocol, session } from 'electron';
+import { BrowserWindow, Menu, app, ipcMain, nativeImage, protocol, session, shell } from 'electron';
 import * as fs from 'fs';
 import * as path from 'path';
 import { Pinyin } from '@baranwang/pinyin';
@@ -157,6 +157,30 @@ export const hooks = (mainWindow: Electron.BrowserWindow) => {
       ]);
     },
   );
+
+  ipcMain.on(EK.playWithPotPlayer, (event, drama: Aipiaxi.DramaInfo) => {
+    const reslut = ['DAUMPLAYLIST'];
+    drama.bgm.forEach((bgm, index) => {
+      if (index === 0) {
+        reslut.push(`playname=${bgm.url}`);
+        reslut.push(`topindex=0`);
+      }
+      reslut.push(`${index + 1}*file*${bgm.url}`);
+      reslut.push(`${index + 1}*title*${bgm.name}`);
+    });
+    const dir = path.resolve(app.getPath('userData'), 'Pot Player');
+    fs.existsSync(dir) || fs.mkdirSync(dir);
+    const filepath = path.resolve(dir, `${drama.name}.dpl`);
+    fs.writeFileSync(filepath, reslut.join('\n'));
+    shell
+      .openExternal(`potplayer://`)
+      .then(() => {
+        shell.openExternal(filepath);
+      })
+      .catch(() => {
+        shell.openExternal('https://potplayer.daum.net/?lang=zh_CN');
+      });
+  });
 
   ipcMain.on(EK.showContextMenu, () => {
     Menu.getApplicationMenu()?.popup({

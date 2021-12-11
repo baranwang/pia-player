@@ -100,7 +100,7 @@ export const SelectRole: React.FC<{
 export const PlayDramaButton: React.FC<{
   dramaId: number;
   onSuccess?: (res: Aipiaxi.DramaInfo) => void;
-}> = ({ dramaId, onSuccess }) => {
+}> = ({ dramaId, onSuccess, children = '播放' }) => {
   const { runAsync, loading } = useRequest(() => getDrama(dramaId), {
     manual: true,
   });
@@ -115,7 +115,7 @@ export const PlayDramaButton: React.FC<{
         });
       }}
     >
-      播放
+      {children}
     </Button>
   );
 };
