@@ -25,7 +25,7 @@ jobs:
 
       - run: pnpm install
 
-      - run: npm run compile
+      - run: pnpm run compile
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           CSC_LINK: ${{ secrets.CSC_LINK }}
