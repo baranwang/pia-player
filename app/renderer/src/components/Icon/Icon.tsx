@@ -12,7 +12,8 @@ export const Icon: React.FC<
     <span
       {...otherProps}
       className={classNames('material-icons', 'anticon', className)}
-      datatype={type}>
+      datatype={type}
+    >
       {type}
     </span>
   );

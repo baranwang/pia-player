@@ -7,7 +7,6 @@ import { Player } from './components/Player';
 
 import { IndexPage } from './pages/index';
 
-import './global.less';
 import styles from './app.module.less';
 
 const App = () => {

@@ -7,13 +7,13 @@ const { productName } = require("./package.json");
 const config = {
   productName,
   appId: "wang.baran.pia-player",
-  asar: true,
+  asar: process.env.MODE === 'production',
   files: ["**/dist/**"],
   win: {
     target: [
       {
         target: "nsis",
-        arch: ["x64", "ia32", "arm64"],
+        arch: ["x64", "ia32"],
       },
     ],
   },

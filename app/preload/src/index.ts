@@ -3,6 +3,10 @@ import log from 'electron-log';
 import { EK } from '/@eventKeys';
 
 contextBridge.exposeInMainWorld('platform', process.platform);
+window.addEventListener('DOMContentLoaded', () => {
+  document.body.classList.add(process.platform);
+});
+
 contextBridge.exposeInMainWorld('log', log);
 
 contextBridge.exposeInMainWorld('ipcRenderer', {
@@ -19,4 +23,4 @@ window.addEventListener('contextmenu', (e) => {
   } else {
     ipcRenderer.send(EK.showContextMenu);
   }
-})
+});

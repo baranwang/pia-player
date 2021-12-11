@@ -13,8 +13,11 @@ export default defineConfig({
   resolve: {
     alias: [
       { find: new RegExp('^/@/'), replacement: `${join(PACKAGE_ROOT, 'src')}/` },
-      { find: new RegExp('^/@eventKeys'), replacement: `${join(PACKAGE_ROOT, '..', 'eventKeys.ts')}` },
-    ]
+      {
+        find: new RegExp('^/@eventKeys'),
+        replacement: `${join(PACKAGE_ROOT, '..', 'eventKeys.ts')}`,
+      },
+    ],
   },
   build: {
     sourcemap: isDevelopment ? 'inline' : false,

@@ -31,7 +31,8 @@ export const PlayerPlaybackRate: React.FC<{
             />
           </div>
         </Menu>
-      }>
+      }
+    >
       <Button type="text">{value}倍速</Button>
     </Dropdown>
   );

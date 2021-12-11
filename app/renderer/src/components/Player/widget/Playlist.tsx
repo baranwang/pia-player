@@ -19,23 +19,20 @@ export const PlayerPlaylist: React.FC<{
           selectedKeys={[`${index}`]}
           onClick={(info) => {
             info.key && onChange(parseInt(info.key));
-          }}>
+          }}
+        >
           <Menu.ItemGroup className={styles['player-queue']} title="播放列表">
             {playlist.map((item, index) => (
               <Menu.Item key={index}>
                 <div className={styles['player-queue-item']}>
-                  <span className={styles['player-queue-item-text']}>
-                    {item.name}
-                  </span>
+                  <span className={styles['player-queue-item-text']}>{item.name}</span>
                   {!!progress[item.hash] && (
                     <Progress
                       className={styles['player-queue-item-progress']}
                       type="circle"
                       percent={progress[item.hash] * 100}
                       width={16}
-                      format={(percent) =>
-                        (percent || 0) < 100 ? '' : <Icon type="done" />
-                      }
+                      format={(percent) => ((percent || 0) < 100 ? '' : <Icon type="done" />)}
                     />
                   )}
                 </div>
@@ -43,7 +40,8 @@ export const PlayerPlaylist: React.FC<{
             ))}
           </Menu.ItemGroup>
         </Menu>
-      }>
+      }
+    >
       <Button type="text" icon={<Icon type="queue_music" />} />
     </Dropdown>
   );

@@ -1,9 +1,9 @@
-import * as React from "react";
-import { getDrama } from "/@/api";
-import { useRequest } from "ahooks";
-import { Button, Form, Select, Slider, Tooltip } from "antd";
+import * as React from 'react';
+import { getDrama } from '/@/api';
+import { useRequest } from 'ahooks';
+import { Button, Form, Select, Slider, Tooltip } from 'antd';
 
-import styles from "./table-widget.module.less";
+import styles from './table-widget.module.less';
 
 export const SelectLenthRange: React.FC<{
   value: [number, number];
@@ -12,7 +12,7 @@ export const SelectLenthRange: React.FC<{
   const [rangeValue, setRangeValue] = React.useState(value);
   return (
     <>
-      <div className={styles["lenth-range"]}>
+      <div className={styles['lenth-range']}>
         <Slider
           range={{ draggableTrack: true }}
           min={0}
@@ -28,7 +28,8 @@ export const SelectLenthRange: React.FC<{
           size="small"
           onClick={() => {
             onChange([0, 90000]);
-          }}>
+          }}
+        >
           重置
         </Button>
         <Button
@@ -36,7 +37,8 @@ export const SelectLenthRange: React.FC<{
           size="small"
           onClick={() => {
             onChange(rangeValue);
-          }}>
+          }}
+        >
           确定
         </Button>
       </div>
@@ -52,12 +54,12 @@ export const SelectRole: React.FC<{
   return (
     <>
       <Form className={styles.role} layout="inline">
-        {["男", "女"].map((item, index) => (
+        {['男', '女'].map((item, index) => (
           <Form.Item key={item} label={item}>
             <Select
               value={role[index]}
               options={Array.from({ length: 6 }, (_, i) => i - 1).map((i) => ({
-                label: i < 0 ? "不限" : `${i} 人`,
+                label: i < 0 ? '不限' : `${i} 人`,
                 value: i,
               }))}
               onChange={(value) => {
@@ -77,7 +79,8 @@ export const SelectRole: React.FC<{
           size="small"
           onClick={() => {
             onChange([-1, -1]);
-          }}>
+          }}
+        >
           重置
         </Button>
         <Button
@@ -85,7 +88,8 @@ export const SelectRole: React.FC<{
           size="small"
           onClick={() => {
             onChange(role);
-          }}>
+          }}
+        >
           确定
         </Button>
       </div>
@@ -109,7 +113,8 @@ export const PlayDramaButton: React.FC<{
         runAsync().then((res) => {
           onSuccess?.(res);
         });
-      }}>
+      }}
+    >
       播放
     </Button>
   );
@@ -119,7 +124,7 @@ export const Ellipsis: React.FC<{
   children: string;
 }> = ({ children }) => {
   return (
-    <Tooltip placement="topLeft" title={children.replace(/<[^>]+>/g, "")}>
+    <Tooltip placement="topLeft" title={children.replace(/<[^>]+>/g, '')}>
       <span dangerouslySetInnerHTML={{ __html: children }} />
     </Tooltip>
   );

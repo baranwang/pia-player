@@ -1,10 +1,10 @@
-import { BrowserWindow } from 'electron'
+import { BrowserWindow } from 'electron';
 
 export const accelerator = {
   'CmdOrCtrl+r': () => {
-    BrowserWindow.getFocusedWindow()?.webContents.reload()
+    BrowserWindow.getFocusedWindow()?.webContents.reload();
   },
   'CmdOrCtrl+F12': () => {
-    BrowserWindow.getFocusedWindow()?.webContents.toggleDevTools()
-  }
-} as const
+    BrowserWindow.getFocusedWindow()?.webContents.toggleDevTools();
+  },
+} as const;

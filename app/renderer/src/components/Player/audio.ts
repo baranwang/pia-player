@@ -1,12 +1,12 @@
 import { useLocalStorageState, usePrevious } from 'ahooks';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
-export const useAudio = ({ onError }: {
+export const useAudio = ({
+  onError,
+}: {
   onError?: (e: Error) => void;
 } = {}) => {
-  const [audio] = useState(
-    <HTMLAudioElement & { setSinkId(deviceId: string): void }>new Audio()
-  );
+  const [audio] = useState(<HTMLAudioElement & { setSinkId(deviceId: string): void }>new Audio());
 
   const [playlist, setPlaylist] = useState<
     {
@@ -28,14 +28,11 @@ export const useAudio = ({ onError }: {
     }
   }, [playlist, playIndex]);
 
-  const current = useMemo(
-    () => playlist[playIndex],
-    [playlist, playIndex]
-  );
+  const current = useMemo(() => playlist[playIndex], [playlist, playIndex]);
 
   const prevAudio = usePrevious(current, (prev, next) => {
     return prev?.src !== next?.src;
-  })
+  });
 
   const disabledNext = useMemo(() => {
     return playIndex === playlist.length - 1;
@@ -57,7 +54,7 @@ export const useAudio = ({ onError }: {
     }
   }, [current]);
 
-  const [isPlaying, setIsPlaying] = useState(false)
+  const [isPlaying, setIsPlaying] = useState(false);
   const [volume, setVolume] = useLocalStorageState('volume', {
     defaultValue: audio.volume,
   });
@@ -66,11 +63,11 @@ export const useAudio = ({ onError }: {
 
   const play = useCallback(() => {
     return audio.play().catch((e: Error) => onError?.(e));
-  }, [audio])
+  }, [audio]);
 
   const pause = useCallback(() => {
     audio.pause();
-  }, [audio])
+  }, [audio]);
 
   const togglePlay = useCallback(() => {
     if (audio.paused) {
@@ -118,12 +115,12 @@ export const useAudio = ({ onError }: {
 
   useEffect(() => {
     audio.addEventListener('ended', next);
-    audio.addEventListener('timeupdate', handlerTimeUpdate)
-    audio.addEventListener('durationchange', handlerDurationChange)
-    audio.addEventListener('volumechange', handlerVolumeChange)
-    audio.addEventListener('play', handlerPlayStatus)
-    audio.addEventListener('pause', handlerPlayStatus)
-    audio.addEventListener('playing', handlerPlayStatus)
+    audio.addEventListener('timeupdate', handlerTimeUpdate);
+    audio.addEventListener('durationchange', handlerDurationChange);
+    audio.addEventListener('volumechange', handlerVolumeChange);
+    audio.addEventListener('play', handlerPlayStatus);
+    audio.addEventListener('pause', handlerPlayStatus);
+    audio.addEventListener('playing', handlerPlayStatus);
 
     if ('mediaSession' in navigator) {
       navigator.mediaSession.setActionHandler('play', play);
@@ -136,20 +133,18 @@ export const useAudio = ({ onError }: {
 
     return () => {
       audio.removeEventListener('ended', next);
-      audio.removeEventListener('timeupdate', handlerTimeUpdate)
-      audio.removeEventListener('durationchange', handlerDurationChange)
-      audio.removeEventListener('volumechange', handlerVolumeChange)
-      audio.removeEventListener('play', handlerPlayStatus)
-      audio.removeEventListener('pause', handlerPlayStatus)
-      audio.removeEventListener('playing', handlerPlayStatus)
-    }
+      audio.removeEventListener('timeupdate', handlerTimeUpdate);
+      audio.removeEventListener('durationchange', handlerDurationChange);
+      audio.removeEventListener('volumechange', handlerVolumeChange);
+      audio.removeEventListener('play', handlerPlayStatus);
+      audio.removeEventListener('pause', handlerPlayStatus);
+      audio.removeEventListener('playing', handlerPlayStatus);
+    };
   }, []);
 
   useEffect(() => {
     audio.volume = volume;
-    console.log(volume);
-    
-  }, [volume])
+  }, [volume]);
 
   const [playbackRate, setPlaybackRate] = useState(audio.playbackRate);
   useEffect(() => {
@@ -189,5 +184,5 @@ export const useAudio = ({ onError }: {
     setCurrentTime,
     setPlaybackRate,
     setSinkId,
-  }
+  };
 };

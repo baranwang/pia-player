@@ -4,6 +4,7 @@ import { createFFmpeg } from '@ffmpeg/ffmpeg';
 import PQueue from 'p-queue';
 import { EK } from '/@eventKeys';
 import ffmpegCore from '@ffmpeg/core/dist/ffmpeg-core.js?url';
+import { message } from 'antd';
 
 const db = new AppDatabase();
 
@@ -21,14 +22,14 @@ const ffmpegQueue = new PQueue({ concurrency: 1 });
 
 export const getConfig = async () => {
   const { data } = await fetch(`${API_PREFIX}article/v1/config`).then(
-    (res) => res.json() as Promise<Aipiaxi.APIResponse<Aipiaxi.Config>>
+    (res) => res.json() as Promise<Aipiaxi.APIResponse<Aipiaxi.Config>>,
   );
   return data;
 };
 
 export const getDrama = async (id: number) => {
   const { data } = await fetch(`${API_PREFIX}article/v1/web/${id}/detail`).then(
-    (res) => res.json() as Promise<Aipiaxi.APIResponse<Aipiaxi.DramaInfo>>
+    (res) => res.json() as Promise<Aipiaxi.APIResponse<Aipiaxi.DramaInfo>>,
   );
   db.drama.put(data);
   return data;
@@ -50,14 +51,14 @@ export const searchDrama = async ({ page = 1, pageSize = 20, q = '' } = {}) => {
           page_size: number;
           list: Aipiaxi.DramaInfoInSearch[];
         }>
-      >
+      >,
   );
   return data;
 };
 
 export const downloadBGM = async (
   bgm: Aipiaxi.DramaInfo['bgm'][number],
-  onProgress?: (options: { ratio: number }) => void
+  onProgress?: (options: { ratio: number }) => void,
 ) => {
   const data = await db.bgm.get(bgm.hash);
   try {
@@ -120,11 +121,15 @@ export const downloadBGM = async (
         window.log.info('[转码]', bgm.name, progress.ratio);
         onProgress?.({ ratio: progress.ratio / 2 + 0.5 });
       });
-      ffmpeg.FS('writeFile', name, new Uint8Array(arrayBuffer));
-      await ffmpeg.run('-i', name, '-c:a', 'aac', '-vn', `${bgm.hash}.aac`);
-      arrayBuffer = ffmpeg.FS('readFile', `${bgm.hash}.aac`).buffer;
-      ffmpeg.FS('unlink', name);
-      ffmpeg.FS('unlink', `${bgm.hash}.aac`);
+      try {
+        ffmpeg.FS('writeFile', name, new Uint8Array(arrayBuffer));
+        await ffmpeg.run('-i', name, '-c:a', 'aac', '-vn', `${bgm.hash}.aac`);
+        arrayBuffer = ffmpeg.FS('readFile', `${bgm.hash}.aac`).buffer;
+        ffmpeg.FS('unlink', name);
+        ffmpeg.FS('unlink', `${bgm.hash}.aac`);
+      } catch (error) {
+        message.warning('该音频文件不支持转码');
+      }
     });
   }
   const filepath = await ipcRenderer.invoke(EK.saveFile, {

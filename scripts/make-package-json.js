@@ -6,7 +6,6 @@ const fs = require("fs");
  */
 const dependencieNames = [
   "@baranwang/pinyin",
-  "@ffmpeg/core",
   "electron-log",
   "electron-updater",
   "node-fetch",

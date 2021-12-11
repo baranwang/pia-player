@@ -1,20 +1,11 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
-import {
-  BrowserWindow,
-  Menu,
-  app,
-  dialog,
-  ipcMain,
-  nativeImage,
-  protocol,
-  session,
-} from 'electron';
+import { BrowserWindow, Menu, app, ipcMain, nativeImage, protocol, session } from 'electron';
 import * as fs from 'fs';
 import * as path from 'path';
 import { Pinyin } from '@baranwang/pinyin';
 import { EK } from '/@eventKeys';
 
-import viewInsertCSS from '../../preload/src/view.css'
+import viewInsertCSS from '../../preload/src/view.css';
 
 import playIconBase64 from '/@/assets/play.png?inline';
 import pauseIconBase64 from '/@/assets/pause.png?inline';
@@ -28,8 +19,7 @@ const skipNextIcon = nativeImage.createFromDataURL(skipNextIconBase64);
 
 const pinyin = new Pinyin();
 
-export const hooks = (
-  mainWindow: Electron.BrowserWindow) => {
+export const hooks = (mainWindow: Electron.BrowserWindow) => {
   protocol.registerStreamProtocol('stream', (request, callback) => {
     const url = request.url.replace(new RegExp('^stream://'), '');
     const filepath = decodeURIComponent(url);
@@ -46,10 +36,7 @@ export const hooks = (
     (details, callback) => {
       let token;
       try {
-        token = fs.readFileSync(
-          path.resolve(app.getPath('userData'), 'token'),
-          'utf-8'
-        );
+        token = fs.readFileSync(path.resolve(app.getPath('userData'), 'token'), 'utf-8');
       } catch (e) {
         // do nothing
       }
@@ -57,7 +44,7 @@ export const hooks = (
         details.requestHeaders['Authorization'] = token;
       }
       callback({ requestHeaders: details.requestHeaders });
-    }
+    },
   );
 
   session.defaultSession.webRequest.onBeforeSendHeaders(
@@ -65,7 +52,7 @@ export const hooks = (
     (details, callback) => {
       details.requestHeaders['referer'] = 'https://aipiaxi.com/';
       callback({ requestHeaders: details.requestHeaders });
-    }
+    },
   );
 
   session.defaultSession.webRequest.onBeforeRequest(
@@ -73,13 +60,16 @@ export const hooks = (
       urls: ['https://static.piaxiya.com/*'],
     },
     (details, callback) => {
-      const url = details.url.replace(
-        'https://static.piaxiya.com',
-        'https://static.aipiaxi.com'
-      );
+      const url = details.url.replace('https://static.piaxiya.com', 'https://static.aipiaxi.com');
       callback({ redirectURL: url });
-    }
+    },
   );
+
+  const getAudioPath = (name: string) => {
+    const dir = path.resolve(app.getPath('userData'), 'BGM Cache');
+    fs.existsSync(dir) || fs.mkdirSync(dir);
+    return path.resolve(dir, name);
+  };
 
   ipcMain.handle(
     EK.saveFile,
@@ -88,11 +78,9 @@ export const hooks = (
       args: {
         arrayBuffer: ArrayBuffer;
         filename: string;
-      }
+      },
     ) => {
-      const dir = path.resolve(app.getPath('userData'), 'BGM Cache');
-      fs.existsSync(dir) || fs.mkdirSync(dir);
-      const filepath = path.resolve(dir, args.filename);
+      const filepath = getAudioPath(args.filename);
       try {
         fs.writeFileSync(filepath, Buffer.from(args.arrayBuffer));
         return filepath;
@@ -100,13 +88,11 @@ export const hooks = (
         console.error(error);
         throw error;
       }
-    }
+    },
   );
 
   ipcMain.handle(EK.checkFile, (event, filename) => {
-    const dir = path.resolve(app.getPath('userData'), 'BGM Cache');
-    fs.existsSync(dir) || fs.mkdirSync(dir);
-    const filepath = path.resolve(dir, filename);
+    const filepath = getAudioPath(filename);
     try {
       return fs.existsSync(filepath);
     } catch (error) {
@@ -123,7 +109,7 @@ export const hooks = (
         controls: MenusControls;
         isPlaying: boolean;
         coverRect?: Electron.Rectangle;
-      }
+      },
     ) => {
       const { controls = [], isPlaying = false } = args;
       const controlList = [
@@ -169,7 +155,7 @@ export const hooks = (
           flags: controls.includes('nextTrack') ? undefined : ['disabled'],
         },
       ]);
-    }
+    },
   );
 
   ipcMain.on(EK.showContextMenu, () => {
@@ -185,9 +171,9 @@ export const hooks = (
       args: {
         id: number;
         title: string;
-      }
+      },
     ) => {
-      const url = `https://aipiaxi.com/Index/post/id/${args.id}`
+      const url = `https://aipiaxi.com/Index/post/id/${args.id}`;
       const { screen } = require('electron');
       const viewWindow = new BrowserWindow({
         title: args.title,
@@ -207,15 +193,15 @@ export const hooks = (
       viewWindow.webContents.insertCSS(viewInsertCSS);
       viewWindow.webContents.session.webRequest.onBeforeRequest(
         {
-          urls: ['https://aipiaxi.com/advance/search*'],
+          urls: ['https://aipiaxi.com/advance/search*', 'https://aipiaxi.com/search/result*'],
         },
         (details, callback) => {
           mainWindow.webContents.send(EK.search, details.url);
           mainWindow.focus();
           callback({ redirectURL: url });
-        }
+        },
       );
-    }
+    },
   );
 
   ipcMain.handle(EK.pinyin, (event, args) => {

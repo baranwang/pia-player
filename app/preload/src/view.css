@@ -15,9 +15,7 @@
   margin-right: auto;
   margin-left: auto;
 }
-.author-name {
-  pointer-events: none;
-}
+
 #content,
 #article-content {
   user-select: text;

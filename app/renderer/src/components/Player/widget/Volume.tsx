@@ -1,4 +1,4 @@
-import * as  React from 'react';
+import * as React from 'react';
 import { Button, Dropdown, Menu, Slider } from 'antd';
 import { Icon } from '/@/components/Icon';
 
@@ -14,9 +14,7 @@ export const PlayerVolume: React.FC<{
 
   React.useEffect(() => {
     navigator.mediaDevices.enumerateDevices().then((devices) => {
-      const deviceList = devices.filter(
-        (device) => device.kind === 'audiooutput'
-      );
+      const deviceList = devices.filter((device) => device.kind === 'audiooutput');
       setDeviceList(deviceList);
     });
   }, [device]);
@@ -24,7 +22,7 @@ export const PlayerVolume: React.FC<{
   React.useEffect(() => {
     if (!device) {
       const deviceId = deviceList.find(
-        (device) => device.label === 'default' || device.deviceId === 'default'
+        (device) => device.label === 'default' || device.deviceId === 'default',
       )?.deviceId;
       deviceId && onDeviceChange(deviceId);
     }
@@ -39,7 +37,8 @@ export const PlayerVolume: React.FC<{
           selectedKeys={device ? [device] : undefined}
           onClick={(info) => {
             onDeviceChange(info.key);
-          }}>
+          }}
+        >
           {!!deviceList.length && (
             <Menu.ItemGroup title="输出">
               {deviceList.map((item) => (
@@ -59,7 +58,8 @@ export const PlayerVolume: React.FC<{
             />
           </div>
         </Menu>
-      }>
+      }
+    >
       <Button
         type="text"
         icon={

@@ -11,16 +11,10 @@ export const PlayerProgress: React.FC<{
   onProgressChange: (currentTime: number) => void;
   onPlay: () => void;
   onPause: () => void;
-}> = ({
-  duration,
-  currentTime,
-  playStatus,
-  onProgressChange,
-  onPlay,
-  onPause,
-}) => {
-  const [beforeChangeTimePlayStutas, saveBeforeChangeTimePlayStutas] =
-    React.useState<boolean | null>(null);
+}> = ({ duration, currentTime, playStatus, onProgressChange, onPlay, onPause }) => {
+  const [beforeChangeTimePlayStutas, saveBeforeChangeTimePlayStutas] = React.useState<
+    boolean | null
+  >(null);
 
   return (
     <div className={styles['player-progress']}>

@@ -14,7 +14,7 @@ export class PlaylistStore {
   }
 
   get playlist() {
-    return this.activeDrama?.bgm
+    return this.activeDrama?.bgm;
   }
 
   addDramaToList = async (arg: number | Aipiaxi.DramaInfo) => {

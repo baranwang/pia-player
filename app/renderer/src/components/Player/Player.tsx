@@ -1,21 +1,21 @@
-import * as React from "react";
-import { Button, Space, message } from "antd";
-import { useLocalStorageState, useMap } from "ahooks";
-import { observer } from "mobx-react";
-import Marquee from "react-fast-marquee";
-import PQueue from "p-queue";
-import { Icon } from "/@/components/Icon";
-import { PlayerPlaybackRate } from "./widget/PlaybackRate";
-import { PlayerPlaylist } from "./widget/Playlist";
-import { PlayerProgress } from "./widget/Progress";
-import { PlayerVolume } from "./widget/Volume";
-import { useAudio } from "./audio";
-import { downloadBGM } from "/@/api";
-import { useStores } from "/@/store";
-import { EK } from "/@eventKeys";
+import * as React from 'react';
+import { Button, Space, message } from 'antd';
+import { useLocalStorageState, useMap } from 'ahooks';
+import { observer } from 'mobx-react';
+import Marquee from 'react-fast-marquee';
+import PQueue from 'p-queue';
+import { Icon } from '/@/components/Icon';
+import { PlayerPlaybackRate } from './widget/PlaybackRate';
+import { PlayerPlaylist } from './widget/Playlist';
+import { PlayerProgress } from './widget/Progress';
+import { PlayerVolume } from './widget/Volume';
+import { useAudio } from './audio';
+import { downloadBGM } from '/@/api';
+import { useStores } from '/@/store';
+import { EK } from '/@eventKeys';
 
-import styles from "./player.module.less";
-import defaultCover from "./assets/default-cover.png?inline";
+import styles from './player.module.less';
+import defaultCover from './assets/default-cover.png?inline';
 
 const donwloadQueue = new PQueue({ concurrency: 3 });
 
@@ -24,18 +24,15 @@ export const Player = observer(() => {
 
   const audio = useAudio({
     onError: (e) => {
-      if (e.name === "NotSupportedError") {
-        message.warning("该音频文件不支持在线播放，正在等待缓存解码");
+      if (e.name === 'NotSupportedError') {
+        message.warning('该音频文件不支持在线播放，正在等待缓存解码');
       }
     },
   });
 
   const [progressMap, { set: setProgress }] = useMap<string, number>();
 
-  const progress = React.useMemo(
-    () => Object.fromEntries(progressMap),
-    [progressMap]
-  );
+  const progress = React.useMemo(() => Object.fromEntries(progressMap), [progressMap]);
 
   React.useEffect(() => {
     const { playlist } = playlistStore;
@@ -44,7 +41,7 @@ export const Player = observer(() => {
       playlist.map((item) => ({
         key: item.hash,
         src: item.filepath || item.url,
-      }))
+      })),
     );
     audio.setPlayIndex(0);
     playlist.forEach(async (item, index) => {
@@ -67,18 +64,19 @@ export const Player = observer(() => {
 
   const activeDrama = React.useMemo(
     () => playlistStore.activeDrama || null,
-    [playlistStore.activeDrama]
+    [playlistStore.activeDrama],
   );
 
   const activeBGM = React.useMemo(() => {
     return playlistStore.playlist?.[audio.playIndex] || null;
   }, [playlistStore.playlist, audio.playIndex]);
 
-  const [activeDevice, setActiveDevice] = useLocalStorageState<
-    MediaDeviceInfo["deviceId"] | null
-  >("activeDevice", {
-    defaultValue: null,
-  });
+  const [activeDevice, setActiveDevice] = useLocalStorageState<MediaDeviceInfo['deviceId'] | null>(
+    'activeDevice',
+    {
+      defaultValue: null,
+    },
+  );
 
   React.useEffect(() => {
     if (activeDevice) {
@@ -90,7 +88,7 @@ export const Player = observer(() => {
     navigator.mediaSession.metadata = new MediaMetadata({
       title: activeBGM?.name,
       artist: activeDrama?.name,
-      artwork: [{ src: activeDrama?.photo || "" }],
+      artwork: [{ src: activeDrama?.photo || '' }],
     });
   }, [activeBGM]);
 
@@ -116,31 +114,25 @@ export const Player = observer(() => {
     const controls: MenusControls = [];
     const canPlay = !!audio.current?.key;
     if (canPlay) {
-      controls.push("togglePlay");
+      controls.push('togglePlay');
     }
     if (canPlay && !audio.disabledNext) {
-      controls.push("nextTrack");
+      controls.push('nextTrack');
     }
     if (canPlay && !audio.disabledPrev) {
-      controls.push("prevTrack");
+      controls.push('prevTrack');
     }
     if (audio.volume > 0) {
-      controls.push("volumeDown");
+      controls.push('volumeDown');
     }
     if (audio.volume < 1) {
-      controls.push("volumeUp");
+      controls.push('volumeUp');
     }
     window.ipcRenderer.send(EK.changeMenu, {
       controls,
       isPlaying: audio.isPlaying,
     });
-  }, [
-    audio.current?.key,
-    audio.disabledNext,
-    audio.disabledPrev,
-    audio.volume,
-    audio.isPlaying,
-  ]);
+  }, [audio.current?.key, audio.disabledNext, audio.disabledPrev, audio.volume, audio.isPlaying]);
 
   if (!audio.current) return <></>;
 
@@ -157,21 +149,15 @@ export const Player = observer(() => {
         onPlay={audio.play}
         onPause={audio.pause}
       />
-      <div className={styles["player-actions"]}>
-        <Space className={styles["player-meta"]}>
-          <img
-            className={styles["player-meta-cover"]}
-            src={activeDrama?.photo || defaultCover}
-          />
+      <div className={styles['player-actions']}>
+        <Space className={styles['player-meta']}>
+          <img className={styles['player-meta-cover']} src={activeDrama?.photo || defaultCover} />
           <Marquee
-            className={styles["player-meta-title"]}
+            className={styles['player-meta-title']}
             gradientWidth={40}
-            gradientColor={
-              (JSON.parse(styles.white) as string)
-                .split(",")
-                .map((v) => +v) as any
-            }
-            play={audio.isPlaying}>
+            gradientColor={(JSON.parse(styles.white) as string).split(',').map((v) => +v) as any}
+            play={audio.isPlaying}
+          >
             {activeBGM?.name}
           </Marquee>
         </Space>
@@ -183,22 +169,14 @@ export const Player = observer(() => {
             disabled={audio.disabledPrev}
             onClick={audio.prev}
           />
-          <Button
-            type="text"
-            icon={<Icon type="fast_rewind" />}
-            onClick={audio.seekBackward}
-          />
+          <Button type="text" icon={<Icon type="fast_rewind" />} onClick={audio.seekBackward} />
           <Button
             type="text"
             size="large"
-            icon={<Icon type={audio.isPlaying ? "pause" : "play_arrow"} />}
+            icon={<Icon type={audio.isPlaying ? 'pause' : 'play_arrow'} />}
             onClick={audio.togglePlay}
           />
-          <Button
-            type="text"
-            icon={<Icon type="fast_forward" />}
-            onClick={audio.seekForward}
-          />
+          <Button type="text" icon={<Icon type="fast_forward" />} onClick={audio.seekForward} />
           <Button
             type="text"
             icon={<Icon type="skip_next" />}
@@ -207,11 +185,8 @@ export const Player = observer(() => {
           />
         </Space>
 
-        <Space className={styles["player-actions-right"]}>
-          <PlayerPlaybackRate
-            value={audio.playbackRate}
-            onChange={audio.setPlaybackRate}
-          />
+        <Space className={styles['player-actions-right']}>
+          <PlayerPlaybackRate value={audio.playbackRate} onChange={audio.setPlaybackRate} />
           <PlayerVolume
             value={audio.volume ?? 0}
             onVolumeChange={audio.setVolume}

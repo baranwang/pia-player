@@ -1,10 +1,11 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
-import { dts } from '@guanghechen/postcss-modules-dts'
-import autoprefixer = require("autoprefixer")
+import { dts } from '@guanghechen/postcss-modules-dts';
+import autoprefixer = require('autoprefixer');
 import { chrome } from '../../electron-vendors.config.json';
 import { join } from 'path';
 import { builtinModules } from 'module';
+import copy from 'rollup-plugin-copy';
 
 const PACKAGE_ROOT = __dirname;
 const isDevelopment = process.env.MODE === 'development';
@@ -15,12 +16,29 @@ export default defineConfig({
   envDir: process.cwd(),
   resolve: {
     alias: [
-      { find: new RegExp('^/@/'), replacement: `${join(PACKAGE_ROOT, 'src')}/` },
-      { find: new RegExp('^/@eventKeys'), replacement: `${join(PACKAGE_ROOT, '..', 'eventKeys.ts')}` },
-      { find: new RegExp('^~'), replacement: '' }
+      {
+        find: new RegExp('^/@/'),
+        replacement: `${join(PACKAGE_ROOT, 'src')}/`,
+      },
+      {
+        find: new RegExp('^/@eventKeys'),
+        replacement: `${join(PACKAGE_ROOT, '..', 'eventKeys.ts')}`,
+      },
+      { find: new RegExp('^~'), replacement: '' },
     ],
   },
-  plugins: [react()],
+  plugins: [
+    react(),
+    copy({
+      targets: [
+        {
+          src: join(process.cwd(), 'node_modules', '@ffmpeg', 'core', 'dist'),
+          dest: PACKAGE_ROOT,
+        },
+      ],
+      hook: 'writeBundle',
+    }),
+  ],
   base: '',
   server: {
     fs: {
@@ -31,9 +49,13 @@ export default defineConfig({
     sourcemap: isDevelopment,
     target: `chrome${chrome}`,
     outDir: 'dist',
+    minify: !isDevelopment,
     assetsDir: '.',
     rollupOptions: {
       external: [...builtinModules],
+      output: {
+        assetFileNames: '[name][extname]',
+      },
     },
     emptyOutDir: true,
     brotliSize: false,
@@ -42,15 +64,13 @@ export default defineConfig({
     preprocessorOptions: {
       less: {
         javascriptEnabled: true,
-      }
+      },
     },
     postcss: {
-      plugins: [
-        autoprefixer()
-      ]
+      plugins: [autoprefixer()],
     },
     modules: {
-      ...dts()
+      ...dts(),
     },
-  }
+  },
 });

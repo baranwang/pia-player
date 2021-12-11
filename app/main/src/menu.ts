@@ -1,5 +1,5 @@
 import { app, shell } from 'electron';
-import { autoUpdater } from 'electron-updater'
+import { autoUpdater } from 'electron-updater';
 import { accelerator } from './accelerator';
 import { productName } from '../../../package.json';
 
@@ -16,15 +16,21 @@ export const createMenu = (
     seekBackward?: () => void;
     nextTrack?: () => void;
     prevTrack?: () => void;
-  } = {}
+  } = {},
 ): Array<Electron.MenuItemConstructorOptions | Electron.MenuItem> => [
-    ...((process.platform === 'darwin'
-      ? [
+  ...((process.platform === 'darwin'
+    ? [
         {
           label: name,
           submenu: [
             { role: 'about', label: `关于 ${name}` },
-            { label: '检查更新…', click: () => isDevelopment ? autoUpdater.checkForUpdates() : autoUpdater.checkForUpdatesAndNotify() },
+            {
+              label: '检查更新…',
+              click: () =>
+                isDevelopment
+                  ? autoUpdater.checkForUpdates()
+                  : autoUpdater.checkForUpdatesAndNotify(),
+            },
             { type: 'separator' },
             // { label: 'Preferences', accelerator: 'CmdOrCtrl+,' },
             // { type: 'separator' },
@@ -36,124 +42,132 @@ export const createMenu = (
           ],
         },
       ]
-      : []) as Array<Electron.MenuItemConstructorOptions | Electron.MenuItem>),
-    {
-      label: '控制',
-      submenu: [
-        {
-          id: 'togglePlay',
-          label: '播放/暂停',
-          accelerator: 'Space',
-          click: () => {
-            options.togglePlay?.();
-          },
+    : []) as Array<Electron.MenuItemConstructorOptions | Electron.MenuItem>),
+  {
+    label: '控制',
+    submenu: [
+      {
+        id: 'togglePlay',
+        label: '播放/暂停',
+        accelerator: 'Space',
+        click: () => {
+          options.togglePlay?.();
         },
-        {
-          id: '_togglePlay',
-          label: '播放/暂停（媒体键）',
-          accelerator: 'MediaPlayPause',
-          visible: false,
-          click: () => {
-            options.togglePlay?.();
-          },
+      },
+      {
+        id: '_togglePlay',
+        label: '播放/暂停（媒体键）',
+        accelerator: 'MediaPlayPause',
+        visible: false,
+        click: () => {
+          options.togglePlay?.();
         },
-        { type: 'separator' },
-        {
-          id: 'seekForward',
-          label: '快进',
-          accelerator: 'right',
-          click: () => {
-            options.seekForward?.();
-          },
+      },
+      { type: 'separator' },
+      {
+        id: 'seekForward',
+        label: '快进',
+        accelerator: 'right',
+        click: () => {
+          options.seekForward?.();
         },
-        {
-          id: 'seekBackward',
-          label: '快退',
-          accelerator: 'left',
-          click: () => {
-            options.seekBackward?.();
-          },
+      },
+      {
+        id: 'seekBackward',
+        label: '快退',
+        accelerator: 'left',
+        click: () => {
+          options.seekBackward?.();
         },
-        {
-          id: 'prevTrack',
-          label: '上一首',
-          accelerator: 'CmdOrCtrl+left',
-          click: () => {
-            options.prevTrack?.();
-          },
+      },
+      {
+        id: 'prevTrack',
+        label: '上一首',
+        accelerator: 'CmdOrCtrl+left',
+        click: () => {
+          options.prevTrack?.();
         },
-        {
-          id: 'nextTrack',
-          label: '下一首',
-          accelerator: 'CmdOrCtrl+right',
-          click: () => {
-            options.nextTrack?.();
-          },
+      },
+      {
+        id: 'nextTrack',
+        label: '下一首',
+        accelerator: 'CmdOrCtrl+right',
+        click: () => {
+          options.nextTrack?.();
         },
-        {
-          id: '_prevTrack',
-          label: '上一首（媒体键）',
-          visible: false,
-          accelerator: 'MediaPreviousTrack',
-          click: () => {
-            options.prevTrack?.();
-          },
+      },
+      {
+        id: '_prevTrack',
+        label: '上一首（媒体键）',
+        visible: false,
+        accelerator: 'MediaPreviousTrack',
+        click: () => {
+          options.prevTrack?.();
         },
-        {
-          id: '_nextTrack',
-          label: '下一首（媒体键）',
-          visible: false,
-          accelerator: 'MediaNextTrack',
-          click: () => {
-            options.nextTrack?.();
-          },
+      },
+      {
+        id: '_nextTrack',
+        label: '下一首（媒体键）',
+        visible: false,
+        accelerator: 'MediaNextTrack',
+        click: () => {
+          options.nextTrack?.();
         },
-        { type: 'separator' },
-        {
-          id: 'volumeUp',
-          label: '音量+',
-          accelerator: 'up',
-          click: () => {
-            options.volumeUp?.();
-          },
+      },
+      { type: 'separator' },
+      {
+        id: 'volumeUp',
+        label: '音量+',
+        accelerator: 'up',
+        click: () => {
+          options.volumeUp?.();
         },
-        {
-          id: 'volumeDown',
-          label: '音量-',
-          accelerator: 'down',
-          click: () => {
-            options.volumeDown?.();
-          },
+      },
+      {
+        id: 'volumeDown',
+        label: '音量-',
+        accelerator: 'down',
+        click: () => {
+          options.volumeDown?.();
         },
-        { type: 'separator' },
-        {
-          label: '重新载入页面',
-          accelerator: 'CmdOrCtrl+r',
-          click: accelerator['CmdOrCtrl+r'],
+      },
+      { type: 'separator' },
+      {
+        label: '重新载入页面',
+        accelerator: 'CmdOrCtrl+r',
+        click: accelerator['CmdOrCtrl+r'],
+      },
+    ],
+  },
+  {
+    label: '窗口',
+    submenu: [
+      { role: 'minimize', label: `最小化 ${name}` },
+      { role: 'zoom', label: `最大化 ${name}` },
+    ],
+  },
+  {
+    label: '帮助',
+    submenu: [
+      {
+        role: 'help',
+        label: `报告问题`,
+        click: () => {
+          shell.openExternal('https://github.com/baranwang/pia-player/issues');
         },
-      ],
-    },
-    {
-      label: '窗口',
-      submenu: [
-        { role: 'minimize', label: `最小化 ${name}` },
-        { role: 'zoom', label: `最大化 ${name}` },
-      ],
-    },
-    {
-      label: '帮助',
-      submenu: [
-        {
-          role: 'help',
-          label: `报告问题`,
-          click: () => {
-            shell.openExternal('https://github.com/baranwang/pia-player/issues');
-          },
-        },
-        { type: 'separator' },
-        ...(process.platform !== 'darwin' ? [
-          { label: '检查更新…', click: () => isDevelopment ? autoUpdater.checkForUpdates() : autoUpdater.checkForUpdatesAndNotify() }
-        ] : []),
-      ],
-    },
-  ];
+      },
+      { type: 'separator' },
+      ...(process.platform !== 'darwin'
+        ? [
+            {
+              label: '检查更新…',
+              click: () =>
+                isDevelopment
+                  ? autoUpdater.checkForUpdates()
+                  : autoUpdater.checkForUpdatesAndNotify(),
+            },
+          ]
+        : []),
+    ],
+  },
+];

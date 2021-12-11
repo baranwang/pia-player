@@ -3,9 +3,13 @@
 .main {
   padding: 24px;
   overflow-y: auto;
+  background-color: fade(mix(@primary-color, @white, 10%), 90%);
 }
 
 .search {
+  &-wrap {
+    width: 100%;
+  }
   &-type {
     width: 96px;
   }

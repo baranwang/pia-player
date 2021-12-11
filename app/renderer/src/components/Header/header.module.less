@@ -3,18 +3,23 @@
 .header {
   display: flex;
   align-items: center;
+  :global(.win32) & {
+    background-color: @primary-color;
+  }
   &-title-bar {
     display: flex;
     align-items: center;
     height: env(titlebar-area-height, 32px);
     min-height: 32px;
     padding: 0 16px;
-    background-color: @primary-color;
     -webkit-app-region: drag;
-    &:global(.darwin) {
+    :global(.darwin) & {
       justify-content: center;
     }
-    &-logo{
+    :global(.win32) & {
+      background-color: @primary-color;
+    }
+    &-logo {
       display: inline-flex;
       align-items: center;
       color: @white;
