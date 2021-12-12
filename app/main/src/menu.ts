@@ -153,7 +153,7 @@ export const createMenu = (
         role: 'help',
         label: `报告问题`,
         click: () => {
-          shell.openExternal('https://github.com/baranwang/pia-player/issues');
+          shell.openExternal('https://github.com/pia-player/pia-player/issues');
         },
       },
       { type: 'separator' },
