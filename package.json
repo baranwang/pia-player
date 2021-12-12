@@ -10,6 +10,7 @@
     "compile": "electron-builder build -mw -c electron-builder.config.js",
     "postinstall": "node scripts/update-electron-vendors.js",
     "prebuild": "node scripts/make-package-json.js && node scripts/licenses.js",
+    "precompile": "npm run build",
     "lint": "eslint --ext .tsx --fix app"
   },
   "repository": {
