@@ -23,7 +23,7 @@ jobs:
           version: latest
           run_install: true
 
-      - run: pnpm run compile
+      - run: npm run compile
         env:
           MODE: production
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

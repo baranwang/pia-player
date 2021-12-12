@@ -7,7 +7,7 @@ const { productName } = require("./package.json");
 const config = {
   productName,
   appId: "wang.baran.pia-player",
-  asar: process.env.MODE === 'production',
+  asar: true,
   files: ["**/dist/**"],
   win: {
     target: [
