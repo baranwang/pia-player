@@ -22,6 +22,7 @@ const config = {
     perMachine: true,
     allowToChangeInstallationDirectory: true,
     uninstallDisplayName: productName,
+    verifyUpdateCodeSignature: false,
   },
   mac: {
     target: [
