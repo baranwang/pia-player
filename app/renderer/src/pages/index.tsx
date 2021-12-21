@@ -12,9 +12,9 @@ import {
   TablePaginationConfig,
   Tooltip,
 } from 'antd';
-import { searchDrama, viewDrama } from '/@/api';
+import { getConfig, searchDrama, viewDrama } from '/@/api';
 import { AppDatabase } from '/@/db';
-import { usePagination } from 'ahooks';
+import { usePagination, useRequest } from 'ahooks';
 import { observer } from 'mobx-react';
 import { useStores } from '/@/store';
 import { Header } from '/@/components/Header';
@@ -22,6 +22,22 @@ import { Ellipsis, PlayDramaButton, SelectLenthRange, SelectRole } from '/@/comp
 import { EK } from '/@eventKeys';
 
 import styles from './index.module.less';
+
+type Filter = {
+  type?: number[];
+  tags?: number[];
+  historical?: number;
+  lengthRange?: [number, number];
+  role?: [number, number];
+};
+
+const defaultFilter: Filter = {
+  type: [0],
+  tags: [],
+  historical: 0,
+  lengthRange: [0, 50000],
+  role: [-1, -1],
+};
 
 const db = new AppDatabase();
 
@@ -53,76 +69,74 @@ const getDramaFromLocal = async (current: number, pageSize: number) => {
 };
 
 export const IndexPage = observer(() => {
-  const { globalStore, playlistStore } = useStores();
+  const { playlistStore } = useStores();
 
-  const [config, setConfig] = React.useState<Aipiaxi.Config>();
+  const { data: config } = useRequest(() => getConfig(), {
+    cacheKey: 'config',
+    setCache: (data) => localStorage.setItem('config', JSON.stringify(data)),
+    getCache: () => JSON.parse(localStorage.getItem('config') || '{}'),
+  });
 
   const [keywordForm] = Form.useForm<{ keyword: string }>();
 
   const [keyword, setKeyword] = React.useState('');
-  const [type, setType] = React.useState(0);
-  const [tags, setTags] = React.useState<number[]>([]);
-  const [historical, setHistorical] = React.useState(0);
-
-  const [lengthRange, setLengthRange] = React.useState<[number, number]>([0, 90000]);
-
-  const [role, setRole] = React.useState<[number, number]>([-1, -1]);
+  const [filter, setFilter] = React.useState<Filter>(defaultFilter);
 
   const searchQuery = React.useMemo(() => {
-    let query: string[] = [];
+    const query: string[] = [];
     if (keyword) {
       query.push(`default:term:${keyword}`);
     }
-    if (type) {
-      query.push(`tag:term:${type}`);
-    }
-    if (historical) {
-      query.push(`tag:term:${historical}`);
-    }
-    if (tags.length) {
-      query = query.concat(tags.map((tag) => `tag:term:${tag}`));
-    }
-    if (lengthRange[0] !== 0 || lengthRange[1] !== 90000) {
+    const { type, historical, tags, lengthRange, role } = filter;
+
+    tags
+      ?.concat(type?.filter((item) => item !== 0) ?? [], historical ? [historical] : [])
+      .forEach((item) => {
+        query.push(`tag:term:${item}`);
+      });
+
+    if (lengthRange && (lengthRange[0] !== 0 || lengthRange[1] !== 50000)) {
       query.push(`length:range:${lengthRange[0]},${lengthRange[1]}`);
     }
-    if (role[0] > -1) {
+    if (role && role[0] > -1) {
       query.push(`role_male:eq:${role[0]}`);
     }
-    if (role[1] > -1) {
+    if (role && role[1] > -1) {
       query.push(`role_female:eq:${role[1]}`);
     }
     return query.join(';');
-  }, [keyword, type, historical, tags, lengthRange, role]);
+  }, [keyword, filter]);
 
   React.useEffect(() => {
-    globalStore.getConfig().then((config) => {
-      setConfig(config);
+    setFilter(defaultFilter);
+  }, [keyword]);
 
-      window.ipcRenderer.on(EK.search, (event, arg) => {
-        const url = new URL(arg);
-        if (url.pathname === '/advance/search') {
-          const tags = Object.values(config).flat();
-          const tagText = url.searchParams.get('tag');
-          const tag = tags.find((tag) => tag.text === tagText);
-          if (tag) {
-            setTags([tag.id]);
-          }
+  React.useEffect(() => {
+    if (!config) return;
+    window.ipcRenderer.on(EK.search, (event, arg) => {
+      const url = new URL(arg);
+      if (url.pathname === '/advance/search') {
+        const tags = Object.values(config).flat();
+        const tagText = url.searchParams.get('tag');
+        const tag = tags.find((tag) => tag.text === tagText);
+        if (tag) {
+          setFilter({ tags: [tag.id] });
         }
-        if (url.pathname === '/search/result') {
-          const q = url.searchParams.get('q');
-          const regex = {
-            keyword: new RegExp('^default:term:'),
-          };
-          if (q && regex.keyword.test(q)) {
-            keywordForm.setFieldsValue({
-              keyword: q.replace(regex.keyword, ''),
-            });
-            keywordForm.submit();
-          }
+      }
+      if (url.pathname === '/search/result') {
+        const q = url.searchParams.get('q');
+        const regex = {
+          keyword: new RegExp('^default:term:'),
+        };
+        if (q && regex.keyword.test(q)) {
+          keywordForm.setFieldsValue({
+            keyword: q.replace(regex.keyword, ''),
+          });
+          keywordForm.submit();
         }
-      });
+      }
     });
-  }, []);
+  }, [config]);
 
   const { data, pagination, loading } = usePagination(
     ({ current = 1, pageSize = 20 }) => {
@@ -150,7 +164,7 @@ export const IndexPage = observer(() => {
           className={styles['search-wrap']}
           form={keywordForm}
           onFinish={({ keyword }) => {
-            setKeyword(keyword.trim());
+            setKeyword(keyword ? keyword.trim() : '');
           }}
         >
           <Form.Item name="keyword" noStyle>
@@ -170,8 +184,10 @@ export const IndexPage = observer(() => {
                         value: item.id,
                       })),
                     ]}
-                    value={type}
-                    onChange={setType}
+                    value={filter.type?.[0]}
+                    onChange={(type) => {
+                      setFilter((filter) => ({ ...filter, type: [type] }));
+                    }}
                   />
                 ) : undefined
               }
@@ -201,8 +217,10 @@ export const IndexPage = observer(() => {
                       ]
                     : []
                 }
-                value={historical}
-                onChange={setHistorical}
+                value={filter.historical}
+                onChange={(historical) => {
+                  setFilter((filter) => ({ ...filter, historical }));
+                }}
               />
             </Form.Item>
             <Form.Item label="标签">
@@ -214,8 +232,10 @@ export const IndexPage = observer(() => {
                   label: item.text,
                   value: item.id,
                 }))}
-                value={tags}
-                onChange={setTags}
+                value={filter.tags}
+                onChange={(tags) => {
+                  setFilter((filter) => ({ ...filter, tags }));
+                }}
               />
             </Form.Item>
           </Form>
@@ -235,8 +255,7 @@ export const IndexPage = observer(() => {
               dataIndex: 'type',
               width: 96,
               filterMultiple: false,
-              filtered: !!type,
-              filteredValue: type ? [type] : null,
+              filteredValue: filter.type?.filter((item) => item !== 0),
               filters: config?.type.map((item) => ({
                 text: item.text,
                 value: item.id,
@@ -255,12 +274,12 @@ export const IndexPage = observer(() => {
               title: '角色',
               key: 'role',
               width: 120,
-              filtered: role[0] > -1 || role[1] > -1,
+              filteredValue: filter.role?.filter((item) => item > -1),
               filterDropdown: ({ confirm }) => (
                 <SelectRole
-                  value={role}
-                  onChange={([...value]) => {
-                    setRole(value);
+                  value={filter.role || [-1, -1]}
+                  onChange={([...role]) => {
+                    setFilter((filter) => ({ ...filter, role }));
                     confirm({ closeDropdown: true });
                   }}
                 />
@@ -271,12 +290,15 @@ export const IndexPage = observer(() => {
               title: '字数',
               width: 96,
               dataIndex: 'word_count',
-              filtered: lengthRange[0] !== 0 || lengthRange[1] !== 90000,
+              filteredValue:
+                filter.lengthRange?.[0] !== 0 || filter.lengthRange?.[1] !== 50000
+                  ? filter.lengthRange
+                  : null,
               filterDropdown: ({ confirm }) => (
                 <SelectLenthRange
-                  value={lengthRange}
-                  onChange={(value) => {
-                    setLengthRange(value);
+                  value={filter.lengthRange}
+                  onChange={(lengthRange) => {
+                    setFilter((filter) => ({ ...filter, lengthRange }));
                     confirm({ closeDropdown: true });
                   }}
                 />
@@ -360,7 +382,8 @@ export const IndexPage = observer(() => {
           pagination={pagination as TablePaginationConfig}
           loading={loading}
           onChange={(pagination, filters) => {
-            setType(filters.type ? (filters.type[0] as number) : 0);
+            const type = (filters.type as number[]) ?? [0];
+            setFilter((filter) => ({ ...filter, type }));
           }}
         />
       </Layout.Content>

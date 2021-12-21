@@ -6,17 +6,18 @@ import { Button, Form, Select, Slider, Tooltip } from 'antd';
 import styles from './table-widget.module.less';
 
 export const SelectLenthRange: React.FC<{
-  value: [number, number];
+  value?: [number, number];
   onChange: (value: [number, number]) => void;
 }> = ({ value, onChange }) => {
-  const [rangeValue, setRangeValue] = React.useState(value);
+  const defaultValue = [0, 50000] as [number, number];
+  const [rangeValue, setRangeValue] = React.useState(value ?? defaultValue);
   return (
     <>
       <div className={styles['lenth-range']}>
         <Slider
           range={{ draggableTrack: true }}
-          min={0}
-          max={90000}
+          min={defaultValue[0]}
+          max={defaultValue[1]}
           step={100}
           value={rangeValue}
           onChange={setRangeValue}
@@ -27,7 +28,8 @@ export const SelectLenthRange: React.FC<{
           type="link"
           size="small"
           onClick={() => {
-            onChange([0, 90000]);
+            setRangeValue(defaultValue);
+            onChange(defaultValue);
           }}
         >
           重置
@@ -47,10 +49,11 @@ export const SelectLenthRange: React.FC<{
 };
 
 export const SelectRole: React.FC<{
-  value: [number, number];
+  value?: [number, number];
   onChange: (value: [number, number]) => void;
 }> = ({ value, onChange }) => {
-  const [role, setRole] = React.useState(value);
+  const defaultValue = [-1, -1] as [number, number];
+  const [role, setRole] = React.useState(value ?? defaultValue);
   return (
     <>
       <Form className={styles.role} layout="inline">
@@ -78,7 +81,8 @@ export const SelectRole: React.FC<{
           type="link"
           size="small"
           onClick={() => {
-            onChange([-1, -1]);
+            setRole(defaultValue);
+            onChange(defaultValue);
           }}
         >
           重置

@@ -8,7 +8,6 @@ const dependencieNames = [
   "@baranwang/pinyin",
   "electron-log",
   "electron-updater",
-  "node-fetch",
 ];
 
 const dependencies = Object.fromEntries(

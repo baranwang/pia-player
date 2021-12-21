@@ -23,16 +23,21 @@
       display: inline-flex;
       align-items: center;
       color: @white;
+      :global(.darwin) & {
+        @media (prefers-color-scheme: light) {
+          color: @primary-color;
+        }
+      }
       &::before {
         display: block;
-        width: 22.4px;
-        height: 16px;
+        width: 18px;
+        height: 12px;
         margin-right: 4px;
         content: "";
         background-color: currentColor;
         mask-image: url("./logo.svg");
         mask-repeat: no-repeat;
-        mask-size: auto 16px;
+        mask-size: auto $height;
         mask-position: 0 50%;
       }
     }

@@ -28,7 +28,7 @@
     "即兴配音"
   ],
   "author": {
-    "name": "WANG BINGHAN",
+    "name": "Baran Wang",
     "email": "me@baran.wang"
   },
   "license": "MIT",
@@ -62,18 +62,17 @@
     "vite": "^2.7.1"
   },
   "dependencies": {
-    "@baranwang/pinyin": "^1.5.3",
+    "@baranwang/pinyin": "^1.5.4",
     "@ffmpeg/core": "^0.10.0",
     "@ffmpeg/ffmpeg": "^0.10.1",
-    "ahooks": "^3.0.0",
-    "antd": "^4.17.3",
+    "ahooks": "^3.0.6",
+    "antd": "^4.17.4",
     "classnames": "^2.3.1",
     "dexie": "^3.2.0",
     "electron-log": "^4.4.1",
     "electron-updater": "^4.6.1",
     "mobx": "^6.3.8",
     "mobx-react": "^7.2.1",
-    "node-fetch": "^3.1.0",
     "p-queue": "^7.1.0",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",

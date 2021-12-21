@@ -29,7 +29,7 @@ const createWindow = () => {
   };
 
   if (process.platform === 'darwin') {
-    windowOptions.vibrancy = 'dark';
+    windowOptions.vibrancy = 'header';
   }
 
   if (process.platform === 'win32') {
