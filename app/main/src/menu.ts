@@ -1,7 +1,8 @@
-import { app, shell } from 'electron';
+import { app, dialog, shell } from 'electron';
 import { autoUpdater } from 'electron-updater';
+import { lt } from 'semver';
 import { accelerator } from './accelerator';
-import { productName } from '../../../package.json';
+import { productName, version } from '../../../package.json';
 
 const isDevelopment = import.meta.env.MODE === 'development';
 
@@ -26,10 +27,15 @@ export const createMenu = (
             { role: 'about', label: `关于 ${name}` },
             {
               label: '检查更新…',
-              click: () =>
-                isDevelopment
-                  ? autoUpdater.checkForUpdates()
-                  : autoUpdater.checkForUpdatesAndNotify(),
+              click: () => {
+                autoUpdater.checkForUpdates().then((res) => {
+                  if (!lt(version, res.updateInfo.version)) {
+                    dialog.showMessageBoxSync({
+                      message: '没有可用的更新',
+                    });
+                  }
+                });
+              },
             },
             { type: 'separator' },
             // { label: 'Preferences', accelerator: 'CmdOrCtrl+,' },

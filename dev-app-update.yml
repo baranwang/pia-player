@@ -1,4 +1,4 @@
-provider: generic
-url: https://pia-player.baran.wang/api/update
+provider: github
 publishAutoUpdate: true
-updaterCacheDirName: pia-player-updater
+repo: pia-player
+owner: pia-player

@@ -57,13 +57,9 @@ const config = {
   },
   publish: [
     {
-      provider: 'generic',
-      url: 'https://pia-player.baran.wang/api/update',
-      publishAutoUpdate: true,
-    },
-    {
       provider: 'github',
       releaseType: 'release',
+      publishAutoUpdate: true,
     },
   ],
 };

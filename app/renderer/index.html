@@ -1,32 +1,34 @@
 <!DOCTYPE html>
 <html lang="zh-Hans">
-  <head>
-    <meta charset="UTF-8" />
-    <meta
-      http-equiv="Content-Security-Policy"
-      content="default-src 'self' 'unsafe-inline' 'unsafe-eval' http: https: ws: data: blob: stream:"
-    />
-    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <script
-      async
-      src="https://www.googletagmanager.com/gtag/js?id=G-Q98WVJ6FL0"
-    ></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag() {
-        dataLayer.push(arguments);
-      }
-      gtag('js', new Date());
 
-      gtag('config', 'G-Q98WVJ6FL0');
-    </script>
-    <link 
-      rel="stylesheet" 
-      href="./src/global.less"/>
-  </head>
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="Content-Security-Policy"
+    content="default-src 'self' 'unsafe-inline' 'unsafe-eval' http: https: ws: data: blob: stream:" />
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-Q98WVJ6FL0"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() {
+      dataLayer.push(arguments);
+    }
+    gtag('js', new Date());
 
-  <body>
-    <div id="root"></div>
-    <script src="./src/app.tsx" type="module"></script>
-  </body>
+    gtag('config', 'G-Q98WVJ6FL0');
+  </script>
+  <script>
+    (function (c, l, a, r, i, t, y) {
+      c[a] = c[a] || function () { (c[a].q = c[a].q || []).push(arguments) };
+      t = l.createElement(r); t.async = 1; t.src = "https://www.clarity.ms/tag/" + i;
+      y = l.getElementsByTagName(r)[0]; y.parentNode.insertBefore(t, y);
+    })(window, document, "clarity", "script", "9u8xmidibs");
+  </script>
+  <link rel="stylesheet" href="./src/global.less" />
+</head>
+
+<body>
+  <div id="root"></div>
+  <script src="./src/app.tsx" type="module"></script>
+</body>
+
 </html>

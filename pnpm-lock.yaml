@@ -7,6 +7,7 @@ specifiers:
   '@guanghechen/postcss-modules-dts': ^1.8.5
   '@types/react': ^17.0.37
   '@types/react-dom': ^17.0.11
+  '@types/semver': ^7.3.9
   '@typescript-eslint/eslint-plugin': ^5.6.0
   '@typescript-eslint/parser': ^5.6.0
   '@vitejs/plugin-react': ^1.1.1
@@ -31,6 +32,7 @@ specifiers:
   react-dom: ^17.0.2
   react-fast-marquee: ^1.2.1
   rollup-plugin-copy: ^3.4.0
+  semver: ^7.3.5
   stylelint: ^14.1.0
   stylelint-config-standard: ^24.0.0
   stylelint-order: ^5.0.0
@@ -53,11 +55,13 @@ dependencies:
   react: 17.0.2
   react-dom: 17.0.2_react@17.0.2
   react-fast-marquee: 1.2.1_react-dom@17.0.2+react@17.0.2
+  semver: 7.3.5
 
 devDependencies:
   '@guanghechen/postcss-modules-dts': 1.8.5
   '@types/react': 17.0.37
   '@types/react-dom': 17.0.11
+  '@types/semver': 7.3.9
   '@typescript-eslint/eslint-plugin': 5.6.0_16d83f5c41c3abb1061a82b07c18e4f3
   '@typescript-eslint/parser': 5.6.0_eslint@8.4.1+typescript@4.5.2
   '@vitejs/plugin-react': 1.1.1
@@ -832,7 +836,6 @@ packages:
 
   /@types/semver/7.3.9:
     resolution: {integrity: sha512-L/TMpyURfBkf+o/526Zb6kd/tchUP3iBDEPjqjb+U2MAJhVRxxrmr2fwpe08E7QsV7YLcpq0tUaQ9O9x97ZIxQ==}
-    dev: false
 
   /@typescript-eslint/eslint-plugin/5.6.0_16d83f5c41c3abb1061a82b07c18e4f3:
     resolution: {integrity: sha512-MIbeMy5qfLqtgs1hWd088k1hOuRsN9JrHUPwVVKCD99EOUqScd7SrwoZl4Gso05EAP9w1kvLWUVGJOVpRPkDPA==}
@@ -2460,7 +2463,7 @@ packages:
     resolution: {integrity: sha512-c9OGXbZ3guC/xOlCg1Ci/VgWlwsqDv1yMQL1CWqXDL0hDjXuNcq0zuR4xqPSuasI3kqFDhqSyTjREz5gzq0fXg==}
     engines: {node: '>=10'}
     dependencies:
-      lru-cache: registry.nlark.com/lru-cache/6.0.0
+      lru-cache: 6.0.0
     dev: true
 
   /html-tags/3.1.0:
@@ -3133,7 +3136,7 @@ packages:
     dependencies:
       hosted-git-info: 4.0.2
       is-core-module: 2.8.0
-      semver: registry.nlark.com/semver/7.3.5
+      semver: 7.3.5
       validate-npm-package-license: 3.0.4
     dev: true
 
@@ -5517,7 +5520,7 @@ packages:
     version: 4.0.2
     engines: {node: '>=10'}
     dependencies:
-      lru-cache: registry.nlark.com/lru-cache/6.0.0
+      lru-cache: 6.0.0
     dev: true
 
   registry.nlark.com/http-cache-semantics/4.1.0:
@@ -5695,15 +5698,6 @@ packages:
     resolution: {integrity: sha1-Z5WRxWTDv/quhFTPCz3zcMPWkRw=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/lodash/download/lodash-4.17.21.tgz}
     name: lodash
     version: 4.17.21
-    dev: true
-
-  registry.nlark.com/lru-cache/6.0.0:
-    resolution: {integrity: sha1-bW/mVw69lqr5D8rR2vo7JWbbOpQ=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/lru-cache/download/lru-cache-6.0.0.tgz}
-    name: lru-cache
-    version: 6.0.0
-    engines: {node: '>=10'}
-    dependencies:
-      yallist: registry.nlark.com/yallist/4.0.0
     dev: true
 
   registry.nlark.com/mimic-response/1.0.1:
@@ -5920,24 +5914,7 @@ packages:
     version: 3.1.1
     engines: {node: '>=8'}
     dependencies:
-      semver: registry.nlark.com/semver/6.3.0
-    dev: true
-
-  registry.nlark.com/semver/6.3.0:
-    resolution: {integrity: sha1-7gpkyK9ejO6mdoexM3YeG+y9HT0=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/semver/download/semver-6.3.0.tgz}
-    name: semver
-    version: 6.3.0
-    hasBin: true
-    dev: true
-
-  registry.nlark.com/semver/7.3.5:
-    resolution: {integrity: sha1-C2Ich5NI2JmOSw5L6Us/EuYBjvc=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/semver/download/semver-7.3.5.tgz}
-    name: semver
-    version: 7.3.5
-    engines: {node: '>=10'}
-    hasBin: true
-    dependencies:
-      lru-cache: registry.nlark.com/lru-cache/6.0.0
+      semver: 6.3.0
     dev: true
 
   registry.nlark.com/shebang-command/2.0.0:
@@ -6062,7 +6039,7 @@ packages:
       is-yarn-global: registry.nlark.com/is-yarn-global/0.3.0
       latest-version: registry.nlark.com/latest-version/5.1.0
       pupa: registry.nlark.com/pupa/2.1.1
-      semver: registry.nlark.com/semver/7.3.5
+      semver: 7.3.5
       semver-diff: registry.nlark.com/semver-diff/3.1.1
       xdg-basedir: registry.nlark.com/xdg-basedir/4.0.0
     dev: true
@@ -6149,12 +6126,6 @@ packages:
     name: y18n
     version: 5.0.8
     engines: {node: '>=10'}
-    dev: true
-
-  registry.nlark.com/yallist/4.0.0:
-    resolution: {integrity: sha1-m7knkNnA7/7GO+c1GeEaNQGaOnI=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/yallist/download/yallist-4.0.0.tgz}
-    name: yallist
-    version: 4.0.0
     dev: true
 
   registry.npmmirror.com/@electron/universal/1.0.5:
@@ -6282,7 +6253,7 @@ packages:
       minimatch: registry.nlark.com/minimatch/3.0.4
       read-config-file: registry.nlark.com/read-config-file/6.2.0
       sanitize-filename: registry.nlark.com/sanitize-filename/1.6.3
-      semver: registry.nlark.com/semver/7.3.5
+      semver: 7.3.5
       temp-file: registry.nlark.com/temp-file/3.4.0
     transitivePeerDependencies:
       - supports-color
