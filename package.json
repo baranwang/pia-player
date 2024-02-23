@@ -4,25 +4,31 @@
   "version": "2.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "tsc && vite build",
-    "preview": "vite preview",
+    "dev": "modern dev",
+    "build": "tsc && modern build",
     "tauri": "tauri"
   },
   "dependencies": {
-    "@douyinfe/semi-ui": "^2.51.3",
-    "@tauri-apps/api": "^2.0.0-alpha.13",
-    "@tauri-apps/plugin-http": "^2.0.0-alpha.6",
-    "@tauri-apps/plugin-shell": "^2.0.0-alpha.3",
+    "@douyinfe/semi-icons": "^2.53.0",
+    "@douyinfe/semi-ui": "^2.52.3",
+    "@modern-js/runtime": "^2.47.0",
+    "@tauri-apps/api": "^2.0.0-beta.2",
+    "@tauri-apps/plugin-http": "^2.0.0-beta.1",
+    "ahooks": "^3.7.10",
+    "color-diff": "^1.4.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
   "devDependencies": {
-    "@tauri-apps/cli": "^2.0.0-alpha.20",
+    "@modern-js-app/eslint-config": "2.47.0",
+    "@modern-js/app-tools": "2.47.0",
+    "@modern-js/eslint-config": "2.47.0",
+    "@modern-js/tsconfig": "2.47.0",
+    "@tauri-apps/cli": "^2.0.0-beta.3",
+    "@types/color-diff": "^1.2.5",
     "@types/react": "^18.2.15",
     "@types/react-dom": "^18.2.7",
-    "@vitejs/plugin-react": "^4.2.1",
-    "typescript": "^5.0.2",
-    "vite": "^5.0.0"
+    "prettier": "~2.8.1",
+    "typescript": "^5.0.2"
   }
 }
