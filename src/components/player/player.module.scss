@@ -1,11 +1,12 @@
 .player {
-  background-color: var(--semi-color-bg-0);
   display: flex;
   align-items: center;
-  padding: 0 24px;
   height: 64px;
-  &-header {
-  }
+  padding: 0 24px;
+  background-color: var(--semi-color-bg-0);
+
+  // &-header {
+  // }
   &-content {
     flex: 1;
   }
@@ -14,5 +15,38 @@
     :global(.semi-icon-default) {
       font-size: 24px;
     }
+  }
+
+  &-progress {
+    @extend %slider;
+    :global {
+      .semi-slider {
+        &-marks {
+          font-size: 12px;
+        }
+        &-mark {
+          text-wrap: nowrap;
+          transform: translate(-100%, 0);
+        }
+        &-dots {
+          display: none;
+        }
+      }
+    }
+  }
+  &-volume {
+    @extend %slider;
+  }
+
+  &-current-time {
+    color: var(--semi-color-text-1);
+  }
+}
+
+%slider {
+  :global(.semi-slider-handle) {
+    width: 16px;
+    height: 16px;
+    margin-top: 8px;
   }
 }

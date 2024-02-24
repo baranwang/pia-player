@@ -1,0 +1,6 @@
+{
+  "extends": ["stylelint-config-twbs-bootstrap", "stylelint-config-css-modules"],
+  "rules": {
+    "selector-max-id": [0]
+  }
+}

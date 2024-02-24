@@ -4,5 +4,13 @@
 }
 
 .content {
+  box-sizing: border-box;
+  height: 100%;
   padding: 24px;
+  overflow: auto;
+
+  &-wrapper {
+    height: 100%;
+    overflow: hidden;
+  }
 }

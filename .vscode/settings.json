@@ -26,13 +26,7 @@
   //
   "cSpell.diagnosticLevel": "Hint",
   "eslint.run": "onType",
-  "eslint.probe": [
-    "javascript",
-    "javascriptreact",
-    "typescript",
-    "typescriptreact",
-    "vue"
-  ],
+  "eslint.probe": ["javascript", "javascriptreact", "typescript", "typescriptreact", "vue"],
   "eslint.format.enable": true,
   "eslint.lintTask.enable": true,
   "javascript.validate.enable": false,
@@ -49,9 +43,11 @@
     "editor.defaultFormatter": "dbaeumer.vscode-eslint",
     "editor.formatOnSave": true
   },
-  "css.validate": false,
-  "scss.validate": false,
-  "less.validate": false,
+  "stylelint.stylelintPath": "node_modules/stylelint",
+  "stylelint.enable": true,
+  "stylelint.validate": ["css", "scss"],
+  "css.validate": true,
+  "scss.validate": true,
   "[css]": {
     "editor.formatOnType": true,
     "editor.formatOnPaste": true,
@@ -60,7 +56,10 @@
   "[scss]": {
     "editor.formatOnType": true,
     "editor.formatOnPaste": true,
-    "editor.formatOnSave": true
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+      "source.fixAll.stylelint": "explicit"
+    }
   },
   "[less]": {
     "editor.formatOnType": true,

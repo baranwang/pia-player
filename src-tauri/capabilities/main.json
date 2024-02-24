@@ -11,6 +11,9 @@
     "resources:default",
     "menu:default",
     "tray:default",
+    "shell:allow-open",
+    "fs:allow-appcache-read",
+    "fs:allow-appcache-write",
     {
       "identifier": "http:default",
       "allow": [

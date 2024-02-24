@@ -1,7 +1,7 @@
 {
   "productName": "PIA Player",
   "version": "2.0.0",
-  "identifier": "wang.baran.pia-player",
+  "identifier": "PIA Player",
   "build": {
     "beforeDevCommand": "npm run dev",
     "devUrl": "http://localhost:1420",
@@ -12,8 +12,8 @@
     "windows": [
       {
         "title": "tauri-app",
-        "width": 800,
-        "height": 600
+        "width": 960,
+        "height": 800
       }
     ],
     "security": {

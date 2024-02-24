@@ -4,8 +4,14 @@ interface CssExports {
   player: string;
   'player-button': string;
   'player-content': string;
+  'player-current-time': string;
+  'player-progress': string;
+  'player-volume': string;
   playerButton: string;
   playerContent: string;
+  playerCurrentTime: string;
+  playerProgress: string;
+  playerVolume: string;
 }
 export const cssExports: CssExports;
 export default cssExports;
