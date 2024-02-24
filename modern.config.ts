@@ -12,13 +12,23 @@ export default defineConfig({
     }),
   ],
   source: {
+    entries: {
+      '/': {
+        entry: './src/routes',
+      },
+    },
+    disableDefaultEntries: true,
     preEntry: ['./src/global.scss'],
   },
   dev: {
     port: 1420,
   },
   output: {
-    svgDefaultExport: 'component',
     enableCssModuleTSDeclaration: true,
+    assetPrefix: './',
+    distPath: {
+      html: './',
+    },
+    overrideBrowserslist: ['last 3 Chrome versions', 'safari 13'],
   },
 });

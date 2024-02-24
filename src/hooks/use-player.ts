@@ -12,16 +12,6 @@ interface PlaylistItem extends XJ.BGM {
 export function usePlayer() {
   const [mediaLoading, setMediaLoading] = useState(false);
 
-  const [playIndex, setPlayIndex] = useReducer((state: number, index: number) => {
-    if (index < 0) {
-      return 0;
-    }
-    if (index >= playlist?.length) {
-      return playlist.length - 1;
-    }
-    return index;
-  }, 0);
-
   const [isPlaying, setIsPlaying] = useState(false);
 
   const [playlist, setPlaylist] = useReducer((state: PlaylistItem[], bgm: XJ.DetailInfo['bgm']) => {
@@ -41,6 +31,16 @@ export function usePlayer() {
       };
     });
   }, []);
+
+  const [playIndex, setPlayIndex] = useReducer((state: number, index: number) => {
+    if (index < 0) {
+      return 0;
+    }
+    if (index >= playlist?.length) {
+      return playlist.length - 1;
+    }
+    return index;
+  }, 0);
 
   const current = useMemo<PlaylistItem | undefined>(() => playlist[playIndex], [playlist, playIndex]);
 

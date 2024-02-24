@@ -2,10 +2,9 @@
   "name": "pia-player",
   "private": true,
   "version": "2.0.0",
-  "type": "module",
   "scripts": {
     "dev": "modern dev",
-    "build": "tsc && modern build",
+    "build": "modern build",
     "tauri": "tauri"
   },
   "dependencies": {
