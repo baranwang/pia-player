@@ -1,7 +1,7 @@
 {
-  "productName": "PIA-Player",
+  "productName": "PIA Player",
   "version": "2.0.0",
-  "identifier": "PIA Player",
+  "identifier": "PIA-Player",
   "build": {
     "beforeDevCommand": "npm run dev",
     "devUrl": "http://localhost:1420",
