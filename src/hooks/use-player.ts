@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useMemo, useReducer, useState } from 'react';
 
 import { Notification } from '@douyinfe/semi-ui';
-import { useLocalStorageState, useRequest } from 'ahooks';
+import { useDebounce, useLocalStorageState, useRequest } from 'ahooks';
 import { Howl } from 'howler';
 
 import { useMediaDevices } from './use-media-devices';
@@ -138,11 +138,13 @@ export function usePlayer() {
     fetchMediaTimeData();
   }, [playlist]);
 
+  const isPlayingDebounce = useDebounce(isPlaying);
+
   const handleSeek = (value: number) => {
-    const keepPlay = isPlaying;
+    current?.howl.pause();
     current?.howl.seek(value);
-    if (keepPlay) {
-      current?.howl.play();
+    if (isPlayingDebounce) {
+      current?.howl?.play();
     }
     fetchMediaTimeData();
   };

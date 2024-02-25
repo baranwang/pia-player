@@ -31,22 +31,6 @@ export const Player: React.FC = () => {
     return <IconPlay />;
   }, [isPlaying]);
 
-  const progress = useMemo(() => {
-    if (!duration) {
-      return 0;
-    }
-    return ((currentTime ?? 0) / duration) * 100;
-  }, [currentTime, duration]);
-
-  const handleProgressChange = (value: number) => {
-    const seek = (duration ?? 0) * (value / 100);
-    handleSeek(seek);
-  };
-
-  const handleProgressTipFormatter = (value: number) => {
-    return formatSecond((duration ?? 0) * (value / 100));
-  };
-
   return (
     <>
       <div className={styles.player}>
@@ -77,14 +61,17 @@ export const Player: React.FC = () => {
         />
         <div className={styles['player-content']}>
           <Slider
+            key={duration}
             className={styles['player-progress']}
-            value={progress}
+            value={currentTime}
             step={0.0001}
-            tipFormatter={handleProgressTipFormatter as any}
+            min={0}
+            max={duration}
+            tooltipVisible={false}
             marks={
               duration
                 ? {
-                    100: (
+                    [duration]: (
                       <>
                         <span className={styles['player-current-time']}>{formatSecond(currentTime ?? 0)}</span> /{' '}
                         {formatSecond(duration)}
@@ -93,7 +80,7 @@ export const Player: React.FC = () => {
                   }
                 : undefined
             }
-            onChange={handleProgressChange as any}
+            onChange={handleSeek as any}
           />
         </div>
         <Volume />

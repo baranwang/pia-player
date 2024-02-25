@@ -5281,6 +5281,13 @@
           ]
         },
         {
+          "description": "webview:allow-reparent -> Enables the reparent command without any pre-configured scope.",
+          "type": "string",
+          "enum": [
+            "webview:allow-reparent"
+          ]
+        },
+        {
           "description": "webview:allow-set-webview-focus -> Enables the set_webview_focus command without any pre-configured scope.",
           "type": "string",
           "enum": [
@@ -5348,6 +5355,13 @@
           "type": "string",
           "enum": [
             "webview:deny-print"
+          ]
+        },
+        {
+          "description": "webview:deny-reparent -> Denies the reparent command without any pre-configured scope.",
+          "type": "string",
+          "enum": [
+            "webview:deny-reparent"
           ]
         },
         {

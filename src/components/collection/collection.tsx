@@ -57,41 +57,39 @@ export const Collection: React.FC<CollectionProps> = ({ type }) => {
     );
   }, [loading, noMore, loadingMore]);
   return (
-    <>
-      <List
-        dataSource={data?.list}
-        loading={loading}
-        layout="horizontal"
-        grid={{
-          gutter: [12, 12],
-          xs: 24,
-          sm: 12,
-          md: 12,
-          lg: 8,
-          xl: 6,
-          xxl: 4,
-        }}
-        renderItem={item => {
-          const linkWrapper = (children: React.ReactNode) => {
-            if (item.id) {
-              return <Link to={`/collections/${item.id}`}>{children}</Link>;
-            }
-            return children;
-          };
-          return (
-            <List.Item
-              header={linkWrapper(<Image src={item.photo} preview={false} width={56} height={56} />)}
-              main={linkWrapper(
-                <Space vertical align="start">
-                  <Typography.Title heading={5}>{item.title}</Typography.Title>
-                  <Typography.Text type="tertiary">{item.article_cnt} 个剧本</Typography.Text>
-                </Space>,
-              )}
-            />
-          );
-        }}
-        loadMore={loadMoreRender}
-      />
-    </>
+    <List
+      dataSource={data?.list}
+      loading={loading}
+      layout="horizontal"
+      grid={{
+        gutter: [12, 12],
+        xs: 24,
+        sm: 12,
+        md: 12,
+        lg: 8,
+        xl: 6,
+        xxl: 4,
+      }}
+      renderItem={item => {
+        const linkWrapper = (children: React.ReactNode) => {
+          if (item.id) {
+            return <Link to={`/collections/${item.id}`}>{children}</Link>;
+          }
+          return children;
+        };
+        return (
+          <List.Item
+            header={linkWrapper(<Image src={item.photo} preview={false} width={56} height={56} />)}
+            main={linkWrapper(
+              <Space vertical align="start">
+                <Typography.Title heading={5}>{item.title}</Typography.Title>
+                <Typography.Text type="tertiary">{item.article_cnt} 个剧本</Typography.Text>
+              </Space>,
+            )}
+          />
+        );
+      }}
+      loadMore={loadMoreRender}
+    />
   );
 };

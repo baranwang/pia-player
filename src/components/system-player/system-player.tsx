@@ -1,7 +1,8 @@
-import { Dropdown } from '@douyinfe/semi-ui';
 import { path } from '@tauri-apps/api';
 import { open as fs, BaseDirectory } from '@tauri-apps/plugin-fs';
 import { open } from '@tauri-apps/plugin-shell';
+
+import { Dropdown } from '@douyinfe/semi-ui';
 import { useRequest } from 'ahooks';
 
 import { api } from '@/api';

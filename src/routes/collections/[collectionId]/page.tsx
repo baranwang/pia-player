@@ -16,7 +16,7 @@ export default () => {
   const navigate = useNavigate();
   const { collectionId } = useParams<{ collectionId: string }>();
   const collectionDetail = useLoaderData() as XJ.CollectionDetail;
-  const { data, pagination } = usePagination(
+  const { data, pagination, loading } = usePagination(
     ({ current }) => {
       if (!collectionId) {
         return Promise.resolve({ list: [], total: collectionDetail.article_cnt });
@@ -99,6 +99,7 @@ export default () => {
         <Table
           dataSource={data?.list}
           columns={columns}
+          loading={loading}
           pagination={{
             currentPage: pagination.current,
             onPageChange: pagination.changeCurrent,
