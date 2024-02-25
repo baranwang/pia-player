@@ -1,74 +1,97 @@
 import { createContext, useContext, useEffect, useMemo, useReducer, useState } from 'react';
 
-import { useRequest } from 'ahooks';
+import { Notification } from '@douyinfe/semi-ui';
+import { useLocalStorageState, useRequest } from 'ahooks';
 import { Howl } from 'howler';
 
+import { useMediaDevices } from './use-media-devices';
 import { api } from '@/api';
+
+import type { HowlErrorCallback } from 'howler';
 
 interface PlaylistItem extends XJ.BGM {
   howl: Howl;
 }
 
 export function usePlayer() {
+  const { mediaDevices } = useMediaDevices();
+  const outputDevices = useMemo(
+    () => mediaDevices.audiooutput?.filter(device => device.deviceId !== 'default'),
+    [mediaDevices],
+  );
+  const [outputDeviceId, setOutputDeviceId] = useLocalStorageState('outputDeviceId', {
+    defaultValue: outputDevices?.[0]?.deviceId,
+  });
+  useEffect(() => {
+    if (!outputDeviceId && outputDevices?.length > 0) {
+      setOutputDeviceId(outputDevices[0].deviceId);
+    }
+  }, [outputDevices, outputDeviceId]);
+
+  const setMediaSinkId = (howl: Howl) => {
+    (howl as any)._sounds.forEach((sound: any) => {
+      sound._node.setSinkId(outputDeviceId);
+    });
+  };
+
   const [mediaLoading, setMediaLoading] = useState(false);
 
   const [isPlaying, setIsPlaying] = useState(false);
 
   const [playlist, setPlaylist] = useReducer((state: PlaylistItem[], bgm: XJ.DetailInfo['bgm']) => {
-    current?.howl.stop();
+    state.forEach(item => item.howl.stop());
     setIsPlaying(false);
     setMediaLoading(true);
     return bgm.map(item => {
       const howl = new Howl({
-        src: [item.url],
+        src: item.url,
         html5: true,
         autoplay: false,
         preload: true,
       });
-      return {
-        ...item,
-        howl,
-      };
+      setMediaSinkId(howl);
+      return { ...item, howl };
     });
   }, []);
 
+  useEffect(() => {
+    playlist.forEach(item => {
+      setMediaSinkId(item.howl);
+    });
+  }, [playlist, outputDeviceId]);
+
   const [playIndex, setPlayIndex] = useReducer((state: number, index: number) => {
-    if (index < 0) {
-      return 0;
-    }
-    if (index >= playlist?.length) {
-      return playlist.length - 1;
-    }
-    return index;
+    return Math.max(0, Math.min(index, playlist.length - 1));
   }, 0);
 
   const current = useMemo<PlaylistItem | undefined>(() => playlist[playIndex], [playlist, playIndex]);
 
-  const _getDurationAndCurrentTime = () => {
-    return { duration: current?.howl.duration(), currentTime: current?.howl.seek() };
-  };
-  const [durationAndCurrentTime, getDurationAndCurrentTime] = useReducer(
-    _getDurationAndCurrentTime,
-    _getDurationAndCurrentTime(),
-  );
+  const getMediaTimeData = () => ({ duration: current?.howl.duration(), currentTime: current?.howl.seek() });
+  const [mediaTimeData, fetchMediaTimeData] = useReducer(getMediaTimeData, getMediaTimeData());
 
-  const { run: addPlaylistById, loading: getDetailLoading } = useRequest(
-    (id: number) => api.getDetail(id).then(res => res.data),
-    {
-      manual: true,
-      onSuccess: detail => {
-        setPlaylist(detail.bgm);
-      },
+  const {
+    data: articleDetail,
+    run: addPlaylistById,
+    loading: getDetailLoading,
+  } = useRequest((id: number) => api.getDetail(id).then(res => res.data), {
+    manual: true,
+    onSuccess: detail => {
+      setPlaylist(detail.bgm);
     },
-  );
+  });
 
   const handleLoad = () => {
     setMediaLoading(false);
-    getDurationAndCurrentTime();
+    fetchMediaTimeData();
+  };
+
+  const handleLoadError: HowlErrorCallback = (_, error) => {
+    setMediaLoading(false);
+    Notification.error({ title: '音频加载失败', content: error });
   };
 
   const handleProgress = () => {
-    getDurationAndCurrentTime();
+    fetchMediaTimeData();
     if (current?.howl.playing()) {
       requestAnimationFrame(handleProgress);
     }
@@ -82,23 +105,6 @@ export function usePlayer() {
     setIsPlaying(false);
   };
 
-  useEffect(() => {
-    current?.howl.on('load', handleLoad);
-    current?.howl.on('play', handleOnPlay);
-    current?.howl.on('pause', handleOnPause);
-    return () => {
-      current?.howl.stop();
-      current?.howl.off('load', handleLoad);
-      current?.howl.off('play', handleOnPlay);
-      current?.howl.off('pause', handleOnPause);
-    };
-  }, [current?.howl]);
-
-  useEffect(() => {
-    setPlayIndex(0);
-    getDurationAndCurrentTime();
-  }, [playlist]);
-
   const handleTogglePlay = () => {
     if (isPlaying) {
       current?.howl.pause();
@@ -107,9 +113,61 @@ export function usePlayer() {
     }
   };
 
+  useEffect(() => {
+    navigator.mediaSession.metadata = new MediaMetadata({
+      title: current?.name,
+      artist: articleDetail?.name,
+      artwork: [{ src: articleDetail?.photo ?? '' }],
+    });
+    navigator.mediaSession.setActionHandler('play', () => current?.howl.play());
+    navigator.mediaSession.setActionHandler('pause', () => current?.howl.pause());
+    current?.howl.on('load', handleLoad);
+    current?.howl.on('play', handleOnPlay);
+    current?.howl.on('pause', handleOnPause);
+    current?.howl.on('loaderror', handleLoadError);
+    return () => {
+      current?.howl.stop();
+      current?.howl.off('load', handleLoad);
+      current?.howl.off('play', handleOnPlay);
+      current?.howl.off('pause', handleOnPause);
+    };
+  }, [current, articleDetail]);
+
+  useEffect(() => {
+    setPlayIndex(0);
+    fetchMediaTimeData();
+  }, [playlist]);
+
   const handleSeek = (value: number) => {
+    const keepPlay = isPlaying;
     current?.howl.seek(value);
+    if (keepPlay) {
+      current?.howl.play();
+    }
+    fetchMediaTimeData();
   };
+
+  navigator.mediaSession.setActionHandler('seekto', event => {
+    if (event.seekTime) {
+      handleSeek(event.seekTime);
+    }
+  });
+  const handleMediaSessionSeek: MediaSessionActionHandler = event => {
+    const skipTime = 5;
+    const { currentTime = 0, duration = 0 } = getMediaTimeData();
+    switch (event.action) {
+      case 'seekforward':
+        handleSeek(Math.min(currentTime + skipTime, duration));
+        break;
+      case 'seekbackward':
+        handleSeek(Math.max(currentTime - skipTime, 0));
+        break;
+      default:
+        break;
+    }
+  };
+  navigator.mediaSession.setActionHandler('seekforward', handleMediaSessionSeek);
+  navigator.mediaSession.setActionHandler('seekbackward', handleMediaSessionSeek);
 
   const playById = (id: number) => {
     current?.howl.stop();
@@ -118,8 +176,8 @@ export function usePlayer() {
     playlist[index].howl.play();
   };
 
-  const disablePrev = useMemo(() => playIndex === 0, [playIndex]);
-  const disableNext = useMemo(() => playIndex === playlist.length - 1, [playIndex, playlist]);
+  const disablePrev = playIndex === 0;
+  const disableNext = playIndex >= playlist.length - 1;
 
   const handlePrev = () => {
     setPlayIndex(playIndex - 1);
@@ -131,8 +189,15 @@ export function usePlayer() {
     playlist[playIndex + 1].howl.play();
   };
 
+  useEffect(() => {
+    navigator.mediaSession.setActionHandler('previoustrack', disablePrev ? null : handlePrev);
+    navigator.mediaSession.setActionHandler('nexttrack', disableNext ? null : handleNext);
+  }, [disablePrev, disableNext]);
+
   return {
-    ...durationAndCurrentTime,
+    ...mediaTimeData,
+    outputDevices,
+    outputDeviceId,
     playlist,
     current,
     isPlaying,
@@ -140,6 +205,7 @@ export function usePlayer() {
     mediaLoading,
     disablePrev,
     disableNext,
+    setOutputDeviceId,
     handleTogglePlay,
     handlePrev,
     handleNext,

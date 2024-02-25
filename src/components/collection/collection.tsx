@@ -22,7 +22,10 @@ export const Collection: React.FC<CollectionProps> = ({ type }) => {
   const { userInfo } = useUserInfo();
   const { data, loading, loadMore, noMore, loadingMore, reload } = useInfiniteScroll(
     (prevData?: ICollectionResp) => {
-      if (!userInfo || !type) {
+      if (!userInfo) {
+        return Promise.reject(new Error('Unauthorized'));
+      }
+      if (!type) {
         return Promise.resolve({ list: [], nextPage: 1, count: 0 });
       }
       return api.getCollectionList(userInfo.id, type, prevData?.nextPage || 1).then(res => ({

@@ -24,7 +24,14 @@ export const Playlist: React.FC = () => {
         </Dropdown.Menu>
       }
     >
-      <Button theme="borderless" size="large" type="tertiary" icon={<IconList />} loading={getDetailLoading} />
+      <Button
+        theme="borderless"
+        size="large"
+        type="tertiary"
+        icon={<IconList />}
+        loading={getDetailLoading}
+        disabled={!playlist.length}
+      />
     </Dropdown>
   );
 };

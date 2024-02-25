@@ -1,6 +1,6 @@
 import { Card, Tabs } from '@douyinfe/semi-ui';
 
-import { Collection } from './_components/collection';
+import { Collection } from '@/components/collection';
 import { CollectionType } from '@/constant';
 
 import styles from './collections.module.scss';

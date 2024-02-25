@@ -1,30 +1,17 @@
-import { useEffect, useMemo, useReducer } from 'react';
+import { useMemo, useReducer } from 'react';
 
 import { IconMute, IconVolume1, IconVolume2 } from '@douyinfe/semi-icons';
 import { Button, Dropdown, Slider } from '@douyinfe/semi-ui';
 import { Howler } from 'howler';
 
-import { useMediaDevices } from '@/hooks/use-media-devices';
+import { usePlayerContext } from '@/hooks/use-player';
 
 import type { SliderProps } from '@douyinfe/semi-ui/lib/es/slider';
 
 import styles from './player.module.scss';
 
 export const Volume: React.FC = () => {
-  const { mediaDevices } = useMediaDevices();
-  const outputDevices = useMemo(
-    () => mediaDevices.audiooutput?.filter(device => device.deviceId !== 'default'),
-    [mediaDevices],
-  );
-  const [deviceId, setDeviceId] = useReducer((state: string, value: string) => {
-    (Howler.ctx as ExtendedAudioContext)?.setSinkId(value);
-    return value;
-  }, outputDevices?.[0].deviceId);
-  useEffect(() => {
-    if (!deviceId && outputDevices?.[0].deviceId) {
-      setDeviceId(outputDevices[0].deviceId);
-    }
-  }, [outputDevices, deviceId]);
+  const { outputDevices, outputDeviceId, setOutputDeviceId } = usePlayerContext();
 
   const [volume, setVolume] = useReducer((state: number, value: number) => {
     Howler.volume(value / 100);
@@ -53,8 +40,8 @@ export const Volume: React.FC = () => {
             {outputDevices?.map(device => (
               <Dropdown.Item
                 key={device.deviceId}
-                active={deviceId === device.deviceId}
-                onClick={() => setDeviceId(device.deviceId)}
+                active={outputDeviceId === device.deviceId}
+                onClick={() => setOutputDeviceId(device.deviceId)}
               >
                 {device.label}
               </Dropdown.Item>

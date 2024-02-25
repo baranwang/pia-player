@@ -19,7 +19,7 @@ module.exports = {
             group: 'internal',
           },
           {
-            pattern: '{react,react-dom,@modern-js/**}',
+            pattern: '{react,react-dom,@modern-js/**,@tauri-apps/**}',
             group: 'builtin',
           },
           {
