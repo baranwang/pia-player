@@ -19,7 +19,7 @@ interface ICollectionResp extends XJ.CollectionListResponse {
 }
 
 export const Collection: React.FC<CollectionProps> = ({ type }) => {
-  const { userInfo } = useUserInfo();
+  const { userInfo, refreshUserInfo } = useUserInfo();
   const { data, loading, loadMore, noMore, loadingMore, reload } = useInfiniteScroll(
     (prevData?: ICollectionResp) => {
       if (!userInfo) {
@@ -37,9 +37,11 @@ export const Collection: React.FC<CollectionProps> = ({ type }) => {
     {
       reloadDeps: [userInfo, type],
       isNoMore: data => data?.list.length === data?.count,
-      onError(e) {
+      async onError(e) {
         if (e.message === 'Unauthorized') {
-          login().then(() => reload());
+          await login();
+          await refreshUserInfo();
+          reload();
         }
       },
     },

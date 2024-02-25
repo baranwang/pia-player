@@ -13,6 +13,8 @@ import { transformHtmlToJsx } from '@/utils/html';
 
 import type { ColumnProps, OnChange, OnRow, VirtualizedProps } from '@douyinfe/semi-ui/lib/es/table';
 
+import styles from './search.module.scss';
+
 const renderHtml = (html: string) => (
   <Typography.Text ellipsis={{ showTooltip: { opts: { content: transformHtmlToJsx(html, false) } } }}>
     {transformHtmlToJsx(html)}
@@ -116,7 +118,7 @@ export default () => {
 
   const [{ height: layoutHeight }] = useModel(layoutHeightModel);
 
-  const scroll = useMemo(() => ({ y: layoutHeight - 200 }), [layoutHeight]);
+  const scroll = useMemo(() => ({ y: layoutHeight - 160 }), [layoutHeight]);
 
   const virtualized = useMemo<VirtualizedProps>(() => {
     return {
@@ -162,6 +164,7 @@ export default () => {
     <>
       <Form onSubmit={handleSubmit}>
         <Card
+          className={styles.content}
           title={
             <Form.Input
               field="keyword"

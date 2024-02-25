@@ -1,6 +1,13 @@
 body {
+  --semi-color-nav-bg: rgba(var(--semi-white), 0.16);
+  --semi-color-bg-0: rgba(var(--semi-white), 0.6);
+  --semi-color-bg-1: rgba(var(--semi-white), 0.5);
+  --semi-color-bg-2: rgba(var(--semi-white), 0.8);
+  --semi-color-bg-3: rgba(var(--semi-white), 0.8);
+
+  --semi-color-primary-light-default: rgba(var(--semi-blue-2), 0.5);
+  --semi-color-info-light-default: rgba(var(--semi-blue-0), 0.8);
   margin: 0;
-  background-color: var(--semi-color-bg-0);
 }
 
 ::-webkit-scrollbar {
@@ -17,4 +24,9 @@ html,
 body,
 #root {
   height: 100%;
+}
+
+.semi-dropdown-wrapper,
+.semi-modal-content {
+  backdrop-filter: blur(12px);
 }

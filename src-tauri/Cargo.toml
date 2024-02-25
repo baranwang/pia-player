@@ -1,6 +1,6 @@
 [package]
 name = "pia-player"
-version = "2.0.0"
+version = "2.0.1"
 description = "PIA Player"
 authors = ["baran.wang"]
 edition = "2021"

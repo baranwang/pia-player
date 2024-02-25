@@ -10,6 +10,8 @@ import { UserInfo } from '@/components/user-info';
 
 import type { ColumnProps } from '@douyinfe/semi-ui/lib/es/table';
 
+import styles from './collection.module.scss';
+
 export default () => {
   const navigate = useNavigate();
   const { collectionId } = useParams<{ collectionId: string }>();
@@ -89,7 +91,11 @@ export default () => {
         </Breadcrumb.Item>
         <Breadcrumb.Item noLink>{collectionDetail.title}</Breadcrumb.Item>
       </Breadcrumb>
-      <Card title={collectionDetail.title} headerExtraContent={<UserInfo uid={collectionDetail.uid} />}>
+      <Card
+        className={styles.content}
+        title={collectionDetail.title}
+        headerExtraContent={<UserInfo uid={collectionDetail.uid} />}
+      >
         <Table
           dataSource={data?.list}
           columns={columns}

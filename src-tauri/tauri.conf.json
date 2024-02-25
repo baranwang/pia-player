@@ -1,6 +1,5 @@
 {
   "productName": "PIA Player",
-  "version": "2.0.0",
   "identifier": "PIA-Player",
   "build": {
     "beforeDevCommand": "npm run dev",
@@ -13,7 +12,11 @@
       {
         "title": "PIA Player",
         "width": 960,
-        "height": 800
+        "height": 800,
+        "transparent": true,
+        "windowEffects": {
+          "effects": ["acrylic"]
+        }
       }
     ],
     "security": {
