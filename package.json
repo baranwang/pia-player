@@ -6,7 +6,8 @@
     "prepare": "tauri icon",
     "dev": "modern dev",
     "build": "modern build",
-    "tauri": "tauri"
+    "tauri": "tauri",
+    "sync-version": "node sync-version.js"
   },
   "dependencies": {
     "@douyinfe/semi-icons": "^2.53.0",

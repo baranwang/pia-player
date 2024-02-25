@@ -31,6 +31,9 @@ jobs:
       - name: install frontend dependencies
         run: npm ci
 
+      - name: sync version
+        run: npm run sync-version
+
       - uses: tauri-apps/tauri-action@v0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
