@@ -36,7 +36,6 @@ fn view_article(article_id: i64, app: tauri::AppHandle) {
         )
         .initialization_script(include_str!("./preload.js"))
         .on_navigation(move |url| article_webview_navigation_handler(&url.to_string(), article_id, app_clone.clone()))
-        .hidden_title(true)
         .build()
         .unwrap();
         article_window

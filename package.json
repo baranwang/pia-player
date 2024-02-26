@@ -1,7 +1,7 @@
 {
   "name": "pia-player",
   "private": true,
-  "version": "2.0.2",
+  "version": "2.1.0",
   "scripts": {
     "prepare": "tauri icon",
     "dev": "modern dev",
