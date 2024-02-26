@@ -12,9 +12,9 @@ export const useMediaDevices = () => {
   );
 
   useEffect(() => {
-    navigator.mediaDevices.addEventListener('devicechange', refresh);
+    navigator.mediaDevices?.addEventListener?.('devicechange', refresh);
     return () => {
-      navigator.mediaDevices.removeEventListener('devicechange', refresh);
+      navigator.mediaDevices?.removeEventListener?.('devicechange', refresh);
     };
   }, []);
 
