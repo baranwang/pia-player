@@ -1,7 +1,7 @@
 // Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
-use pinyin::ToPinyin;
+use pinyin::ToPinyinMulti;
 use tauri::{LogicalSize, Manager, Size};
 
 const ARTICLE_URL_PREFIX: &str = "https://aipiaxi.com/article-detail/";
@@ -51,8 +51,12 @@ fn view_article(article_id: i64, app: tauri::AppHandle) {
 fn pinyin(text: &str) -> String {
     let mut result = String::new();
     for ch in text.chars() {
-        if let Some(pinyin) = ch.to_pinyin() {
-            result.push_str(format!("{} ", pinyin.with_tone()).as_str());
+        if let Some(pinyin_multi) = ch.to_pinyin_multi() {
+            let mut item_result = Vec::new();
+            for pinyin in pinyin_multi {
+                item_result.push(pinyin.with_tone());
+            }
+            result.push_str(format!("{} ", item_result.join("/")).as_str());
         } else {
             result.push(ch);
         }
