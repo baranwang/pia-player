@@ -1,4 +1,6 @@
 import { Outlet } from '@modern-js/runtime/router';
+import { invoke } from '@tauri-apps/api/core';
+import { listen } from '@tauri-apps/api/event';
 import { getCurrent } from '@tauri-apps/api/window';
 import { useEffect } from 'react';
 
@@ -20,6 +22,9 @@ export default function () {
     const currentWindow = getCurrent();
     currentWindow.onThemeChanged(e => setTheme(e.payload));
     currentWindow.theme().then(setTheme);
+    listen('article-navigation', e => {
+      invoke('view_article', { articleId: e.payload });
+    });
   }, []);
 
   const player = usePlayer();

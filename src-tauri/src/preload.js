@@ -17,6 +17,7 @@ css.innerHTML = `
 
     .container > .left {
         width: 100% !important;
+        border-radius: 8px;
     }
 
     .pia-player-popover {
